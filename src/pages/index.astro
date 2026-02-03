@@ -1,17 +1,217 @@
 ---
-// 什麼是 Git？— 專案初始化完成後開始實作
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<!doctype html>
-<html lang="zh-TW">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>什麼是 Git？</title>
-  </head>
-  <body>
-    <h1>什麼是 Git？</h1>
-    <p>專案初始化中...</p>
-  </body>
-</html>
+<BaseLayout>
+  <!-- ═══════════════════════════════════════════════════════════════
+       序章：標題
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="intro">
+    <div class="chapter__inner">
+      <h1 class="chapter__title reveal-title glow-text">
+        什麼是 Git？
+      </h1>
+      <p class="chapter__subtitle reveal reveal-delay-1">
+        讓創意工作者「看懂」版本控制的心智模型
+      </p>
+      <div class="divider reveal reveal-delay-2"></div>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-3">
+          Git 不是程式設計師的專屬工具。<br />
+          它是<strong>創作流程</strong>的核心——無論你是設計師、字型師，還是藝術家。
+        </p>
+        <p class="reveal reveal-delay-4" style="margin-top: var(--space-xl); color: var(--text-ghost);">
+          向下捲動，開始探索 ↓
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第一章：秩序的紮根 (Root)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch1-root" data-cli="git init">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第一章</span>
+      <h2 class="chapter__title reveal-title">秩序的紮根</h2>
+      <p class="chapter__subtitle reveal reveal-delay-1">Root</p>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          一切從這裡開始。<code>git init</code> 確立了<strong>邏輯的零點</strong>——
+          你的專案從此有了「記憶」。
+        </p>
+        <p class="reveal reveal-delay-3">
+          這不只是一個資料夾。<br />
+          這是一個<strong>有時間感的空間</strong>。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第二章：線性的累積 (Trunk)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch2-trunk" data-cli="git commit -m &quot;訊息&quot;">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第二章</span>
+      <h2 class="chapter__title reveal-title">線性的累積</h2>
+      <p class="chapter__subtitle reveal reveal-delay-1">Trunk</p>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          每一次 <code>commit</code>，都是一個有意義的<strong>存檔點</strong>。
+        </p>
+        <div class="callout reveal reveal-delay-3">
+          <p>
+            好的 commit 訊息回答的是「為什麼」，而非「做了什麼」。
+          </p>
+        </div>
+        <p class="reveal reveal-delay-4">
+          時間在這裡是垂直的——<br />
+          最舊的在下，最新的在上，像年輪一樣層層疊加。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第三章：維度的偏轉 (Branching)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch3-branch" data-cli="git checkout -b feature">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第三章</span>
+      <h2 class="chapter__title reveal-title">維度的偏轉</h2>
+      <p class="chapter__subtitle reveal reveal-delay-1">Branching</p>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          分支不是「複製」，而是<strong>平行宇宙</strong>。
+        </p>
+        <p class="reveal reveal-delay-3">
+          你可以在這裡安全地嘗試，<br />
+          不會破壞原本的世界。
+        </p>
+        <p class="reveal reveal-delay-4">
+          這是<strong>非破壞性創作</strong>的核心概念。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第四章：空間的共鳴 (Sync)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch4-sync" data-cli="git push origin main">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第四章</span>
+      <h2 class="chapter__title reveal-title">空間的共鳴</h2>
+      <p class="chapter__subtitle reveal reveal-delay-1">Sync</p>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          <code>push</code> 是<strong>手動版的 Google Drive</strong>——<br />
+          你決定何時備份，何時同步。
+        </p>
+        <p class="reveal reveal-delay-3">
+          本地與遠端，兩個空間開始共鳴。<br />
+          你的創作不再只存在於一台電腦上。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第五章：任務的可視化 (Issue)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch5-issue" data-cli="gh issue create">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第五章</span>
+      <h2 class="chapter__title reveal-title">任務的可視化</h2>
+      <p class="chapter__subtitle reveal reveal-delay-1">Issue</p>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          Issue 是對自己的承諾：<br />
+          「<strong>我要做什麼</strong>」的可視化清單。
+        </p>
+        <div class="callout reveal reveal-delay-3">
+          <p>
+            很多人會先建立 Issue 再開分支，讓工作更有條理。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第六章：自我審查的儀式 (PR)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch6-pr" data-cli="gh pr create">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第六章</span>
+      <h2 class="chapter__title reveal-title">自我審查的儀式</h2>
+      <p class="chapter__subtitle reveal reveal-delay-1">Pull Request</p>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          即使是自己的程式碼，<br />
+          也值得正式地「<strong>審查</strong>」後合併。
+        </p>
+        <p class="reveal reveal-delay-3">
+          PR 是分支準備合併前的<strong>檢查站</strong>——<br />
+          讓你退一步，用審視者的眼光看自己的創作。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第七章：邏輯的歸一 (Convergence)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch7-merge" data-cli="git merge feature">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第七章</span>
+      <h2 class="chapter__title reveal-title">邏輯的歸一</h2>
+      <p class="chapter__subtitle reveal reveal-delay-1">Convergence</p>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          當兩條線交會，可能會產生<strong>衝突</strong>。
+        </p>
+        <p class="reveal reveal-delay-3">
+          但衝突不是問題——<br />
+          「<strong>決策</strong>」才是合併的本質。
+        </p>
+        <p class="reveal reveal-delay-4">
+          選擇，然後繼續前進。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       結尾：下一步
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="next-steps">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">結語</span>
+      <h2 class="chapter__title reveal-title gradient-text">下一步</h2>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-1">
+          你已經建立了 Git 的<strong>心智模型</strong>。<br />
+          現在，試著用它吧。
+        </p>
+        <div class="divider reveal reveal-delay-2"></div>
+        <h3 class="reveal reveal-delay-3">推薦工具</h3>
+        <ul class="tools-list reveal reveal-delay-4">
+          <li>
+            <strong>GitHub Desktop</strong>
+            <span>— 最友善的圖形介面，適合入門</span>
+          </li>
+          <li>
+            <strong>VSCode + GitLens</strong>
+            <span>— 通用方案，編輯器內建 Git 整合</span>
+          </li>
+          <li>
+            <strong>Fork</strong>
+            <span>— 給想要更多控制的進階使用者</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

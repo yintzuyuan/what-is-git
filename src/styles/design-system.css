@@ -1,0 +1,503 @@
+/* ═══════════════════════════════════════════════════════════════
+   什麼是 Git？— 設計系統
+   基於 erikyin.net 設計語言，調整為深色主題
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 0. 基礎變數（延續主網站系統） ── */
+:root {
+  /* 色彩系統 - 基於主網站深色模式調整 */
+  --ink-black: #1a1a1a;
+  --deep-black: #0f0f12;
+  --void: #08080c;
+  --rice-paper: #f8f6f0;
+
+  /* 星點強調色 */
+  --star-cyan: #5eead4;
+  --star-purple: #c4b5fd;
+  --star-gold: #fcd34d;
+  --star-rose: #fb7185;
+
+  /* 文字層次 - 基於主網站深色模式 */
+  --text-bright: #ffffff;
+  --text-primary: #e8e6e0;
+  --text-secondary: #9ca3af;
+  --text-ghost: #6b7280;
+
+  /* 發光效果 */
+  --glow-cyan: 0 0 20px rgba(94, 234, 212, 0.35);
+  --glow-purple: 0 0 20px rgba(196, 181, 253, 0.35);
+  --glow-gold: 0 0 20px rgba(252, 211, 77, 0.35);
+  --glow-rose: 0 0 20px rgba(251, 113, 133, 0.4);
+
+  /* 間距系統 - 與主網站完全一致 */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+
+  /* 字型系統 - 與主網站完全一致 */
+  --font-base: "IBM Plex Sans", "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "PingFang TC", sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* 邊框 - 基於主網站深色模式 */
+  --border: rgba(248, 246, 240, 0.2);
+  --border-light: #374151;
+
+  /* 動畫 */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+  --duration-slower: 1000ms;
+
+  /* 佈局 - 與主網站一致 */
+  --content-width: 42rem;
+}
+
+/* ── 1. 重設與基礎 ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-base);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-primary);
+  background: var(--ink-black);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 微妙的星空漸層 */
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(94, 234, 212, 0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(196, 181, 253, 0.02) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* ── 2. 排版（基於主網站） ── */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.4;
+  margin-bottom: var(--space-md);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text-bright);
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 2.5rem);
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+p {
+  margin-bottom: var(--space-md);
+  max-width: 60ch;
+}
+
+strong {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--star-cyan);
+  background: rgba(94, 234, 212, 0.1);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+/* ── 3. 章節容器 ── */
+.chapter {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.chapter__inner {
+  max-width: var(--content-width);
+  width: 100%;
+}
+
+.chapter__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--star-cyan);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+  opacity: 0.8;
+}
+
+.chapter__eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--star-cyan);
+  opacity: 0.5;
+}
+
+.chapter__title {
+  margin-bottom: var(--space-sm);
+}
+
+.chapter__subtitle {
+  font-style: italic;
+  font-size: 1.125rem;
+  color: var(--text-ghost);
+  margin-bottom: var(--space-lg);
+}
+
+.chapter__body {
+  color: var(--text-secondary);
+}
+
+.chapter__body p + p {
+  margin-top: var(--space-md);
+}
+
+/* ── 4. CLI 鏡像 ── */
+.cli-mirror {
+  position: fixed;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-ghost);
+  background: rgba(26, 26, 26, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 100px;
+  border: 1px solid var(--border);
+
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out-expo);
+}
+
+.cli-mirror.is-visible {
+  opacity: 1;
+}
+
+.cli-mirror__prompt {
+  color: var(--star-cyan);
+  opacity: 0.7;
+}
+
+.cli-mirror__command {
+  color: var(--text-secondary);
+}
+
+/* 桌面版：右側中央 */
+@media (min-width: 1024px) {
+  .cli-mirror {
+    bottom: auto;
+    top: 50%;
+    left: auto;
+    right: var(--space-lg);
+    transform: translateY(-50%);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: 6px;
+  }
+}
+
+/* ── 5. 進度指示 ── */
+.progress {
+  position: fixed;
+  left: var(--space-lg);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+}
+
+.progress__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-ghost);
+  opacity: 0.3;
+  transition: all var(--duration-normal) var(--ease-out-expo);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.progress__dot:hover {
+  opacity: 0.6;
+  transform: scale(1.3);
+}
+
+.progress__dot.is-active {
+  background: var(--star-cyan);
+  opacity: 1;
+  box-shadow: var(--glow-cyan);
+}
+
+/* ── 6. 星座畫布 ── */
+.constellation-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.constellation-canvas svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 星點樣式 */
+.star {
+  transition: all var(--duration-slow) var(--ease-out-expo);
+}
+
+.star--main {
+  fill: var(--star-cyan);
+  filter: url(#glow-cyan);
+}
+
+.star--feature {
+  fill: var(--star-purple);
+  filter: url(#glow-purple);
+}
+
+.star--merge {
+  fill: var(--star-gold);
+  filter: url(#glow-gold);
+}
+
+.star--conflict {
+  fill: var(--star-rose);
+  filter: url(#glow-rose);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* 連線樣式 */
+.constellation-line {
+  stroke-width: 1.5;
+  fill: none;
+  opacity: 0.3;
+  stroke-linecap: round;
+}
+
+.constellation-line--main {
+  stroke: var(--star-cyan);
+}
+
+.constellation-line--feature {
+  stroke: var(--star-purple);
+}
+
+/* ── 7. 動畫類別 ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity var(--duration-slower) var(--ease-out-expo),
+    transform var(--duration-slower) var(--ease-out-expo);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 100ms; }
+.reveal-delay-2 { transition-delay: 200ms; }
+.reveal-delay-3 { transition-delay: 300ms; }
+.reveal-delay-4 { transition-delay: 400ms; }
+.reveal-delay-5 { transition-delay: 500ms; }
+
+/* 標題動畫 */
+.reveal-title {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity var(--duration-slower) var(--ease-out-expo),
+    transform var(--duration-slower) var(--ease-out-expo);
+}
+
+.reveal-title.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── 8. 工具清單 ── */
+.tools-list {
+  list-style: none;
+  margin-top: var(--space-lg);
+}
+
+.tools-list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tools-list li:last-child {
+  border-bottom: none;
+}
+
+.tools-list strong {
+  color: var(--star-cyan);
+  font-weight: 500;
+}
+
+.tools-list span {
+  color: var(--text-ghost);
+  font-size: 0.9rem;
+}
+
+/* ── 9. 特殊效果 ── */
+
+/* 光暈文字 */
+.glow-text {
+  text-shadow: 0 0 30px rgba(94, 234, 212, 0.25);
+}
+
+/* 漸層文字 */
+.gradient-text {
+  background: linear-gradient(135deg, var(--star-cyan), var(--star-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 分隔線 */
+.divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--star-cyan), transparent);
+  margin: var(--space-lg) 0;
+  opacity: 0.4;
+}
+
+/* 引言區塊 */
+.callout {
+  padding: var(--space-md);
+  background: rgba(94, 234, 212, 0.03);
+  border-left: 2px solid var(--star-cyan);
+  border-radius: 0 4px 4px 0;
+  margin: var(--space-lg) 0;
+}
+
+.callout p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ── 10. 響應式 ── */
+@media (max-width: 768px) {
+  :root {
+    --space-lg: 1.5rem;
+  }
+
+  body {
+    font-size: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .chapter {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .cli-mirror {
+    bottom: var(--space-md);
+    font-size: 0.75rem;
+    padding: var(--space-xs) var(--space-sm);
+  }
+}
+
+/* ── 11. 無障礙 ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal, .reveal-title {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--star-cyan);
+  outline-offset: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

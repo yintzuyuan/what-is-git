@@ -1,0 +1,249 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = '什麼是 Git？',
+  description = '讓創意工作者「看懂」Git 邏輯的引導式互動展示',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!-- Fonts - 與主網站一致 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/what-is-git/favicon.svg" />
+  </head>
+  <body>
+    <!-- 星座畫布 -->
+    <div class="constellation-canvas" aria-hidden="true">
+      <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <!-- 發光濾鏡 -->
+          <filter id="glow-cyan" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="glow-purple" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="glow-gold" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="glow-rose" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- 背景星點（靜態裝飾） -->
+        <g class="background-stars" opacity="0.3">
+          <circle cx="120" cy="180" r="1" fill="#5eead4" />
+          <circle cx="340" cy="90" r="0.8" fill="#c4b5fd" />
+          <circle cx="560" cy="220" r="1.2" fill="#5eead4" />
+          <circle cx="780" cy="60" r="0.6" fill="#f1f5f9" />
+          <circle cx="1000" cy="150" r="1" fill="#5eead4" />
+          <circle cx="1200" cy="280" r="0.7" fill="#c4b5fd" />
+          <circle cx="1400" cy="100" r="1.1" fill="#5eead4" />
+          <circle cx="1600" cy="200" r="0.9" fill="#f1f5f9" />
+          <circle cx="1800" cy="320" r="0.8" fill="#c4b5fd" />
+          <circle cx="200" cy="450" r="1" fill="#f1f5f9" />
+          <circle cx="450" cy="380" r="0.7" fill="#5eead4" />
+          <circle cx="700" cy="520" r="1.1" fill="#c4b5fd" />
+          <circle cx="950" cy="420" r="0.6" fill="#5eead4" />
+          <circle cx="1150" cy="550" r="1" fill="#f1f5f9" />
+          <circle cx="1380" cy="480" r="0.8" fill="#5eead4" />
+          <circle cx="1620" cy="600" r="1.2" fill="#c4b5fd" />
+          <circle cx="80" cy="700" r="0.9" fill="#5eead4" />
+          <circle cx="320" cy="800" r="1" fill="#f1f5f9" />
+          <circle cx="580" cy="720" r="0.7" fill="#c4b5fd" />
+          <circle cx="840" cy="850" r="1.1" fill="#5eead4" />
+          <circle cx="1100" cy="780" r="0.8" fill="#f1f5f9" />
+          <circle cx="1340" cy="900" r="1" fill="#5eead4" />
+          <circle cx="1580" cy="820" r="0.6" fill="#c4b5fd" />
+          <circle cx="1820" cy="950" r="1.2" fill="#5eead4" />
+        </g>
+
+        <!-- Git 視覺化動態元素（由 JS 控制） -->
+        <g id="constellation-lines"></g>
+        <g id="constellation-stars"></g>
+      </svg>
+    </div>
+
+    <!-- 進度指示點 -->
+    <nav class="progress" aria-label="章節導航">
+      <button class="progress__dot is-active" data-target="intro" aria-label="序章"></button>
+      <button class="progress__dot" data-target="ch1-root" aria-label="第一章"></button>
+      <button class="progress__dot" data-target="ch2-trunk" aria-label="第二章"></button>
+      <button class="progress__dot" data-target="ch3-branch" aria-label="第三章"></button>
+      <button class="progress__dot" data-target="ch4-sync" aria-label="第四章"></button>
+      <button class="progress__dot" data-target="ch5-issue" aria-label="第五章"></button>
+      <button class="progress__dot" data-target="ch6-pr" aria-label="第六章"></button>
+      <button class="progress__dot" data-target="ch7-merge" aria-label="第七章"></button>
+      <button class="progress__dot" data-target="next-steps" aria-label="結語"></button>
+    </nav>
+
+    <!-- CLI 鏡像 -->
+    <div class="cli-mirror" id="cli-mirror" aria-live="polite">
+      <span class="cli-mirror__prompt">$</span>
+      <span class="cli-mirror__command" id="cli-command"></span>
+    </div>
+
+    <!-- 主要內容 -->
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/design-system.css';
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ═══════════════════════════════════════════
+  // 元素參照
+  // ═══════════════════════════════════════════
+  const cliMirror = document.getElementById('cli-mirror');
+  const cliCommand = document.getElementById('cli-command');
+  const progressDots = document.querySelectorAll('.progress__dot');
+  const chapters = document.querySelectorAll('.chapter');
+
+  // ═══════════════════════════════════════════
+  // 章節捲動觸發
+  // ═══════════════════════════════════════════
+  chapters.forEach((chapter, index) => {
+    const cli = chapter.getAttribute('data-cli');
+
+    ScrollTrigger.create({
+      trigger: chapter,
+      start: 'top center',
+      end: 'bottom center',
+      onEnter: () => {
+        updateCli(cli);
+        updateProgress(index);
+        revealChapter(chapter);
+      },
+      onEnterBack: () => {
+        updateCli(cli);
+        updateProgress(index);
+      },
+    });
+  });
+
+  // ═══════════════════════════════════════════
+  // CLI 鏡像更新
+  // ═══════════════════════════════════════════
+  function updateCli(command: string | null) {
+    if (!cliMirror || !cliCommand) return;
+
+    if (command) {
+      gsap.to(cliMirror, {
+        opacity: 0,
+        y: 10,
+        duration: 0.15,
+        onComplete: () => {
+          cliCommand.textContent = command;
+          cliMirror.classList.add('is-visible');
+          gsap.to(cliMirror, {
+            opacity: 1,
+            y: 0,
+            duration: 0.3,
+            ease: 'power2.out',
+          });
+        },
+      });
+    } else {
+      gsap.to(cliMirror, {
+        opacity: 0,
+        duration: 0.3,
+        onComplete: () => {
+          cliMirror.classList.remove('is-visible');
+        },
+      });
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  // 進度指示更新
+  // ═══════════════════════════════════════════
+  function updateProgress(activeIndex: number) {
+    progressDots.forEach((dot, i) => {
+      dot.classList.toggle('is-active', i === activeIndex);
+    });
+  }
+
+  // ═══════════════════════════════════════════
+  // 章節淡入
+  // ═══════════════════════════════════════════
+  function revealChapter(chapter: Element) {
+    const reveals = chapter.querySelectorAll('.reveal, .reveal-title');
+    reveals.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  // ═══════════════════════════════════════════
+  // 進度點擊導航
+  // ═══════════════════════════════════════════
+  progressDots.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      const target = dot.getAttribute('data-target');
+      if (target) {
+        const targetEl = document.getElementById(target);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  });
+
+  // ═══════════════════════════════════════════
+  // 初始化首章
+  // ═══════════════════════════════════════════
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const introChapter = document.getElementById('intro');
+      if (introChapter) {
+        revealChapter(introChapter);
+      }
+    }, 300);
+  });
+</script>
