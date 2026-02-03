@@ -1,20 +1,39 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  專案：什麼是 Git？(What is Git?)
+  目標：讓創意工作者「看懂」Git 版本控制概念的互動式 Scrollytelling 網站
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  技術棧：
+  - Astro（靜態輸出）
+  - GSAP + ScrollTrigger（捲動動畫）
+  - 原生 CSS Variables（設計系統）
+  - GitHub Pages（部署）
+
+  設計約束：
+  - 視覺語言與 erikyin.net 一致
+  - 深色主題（#1a1a1a 背景）
+  - IBM Plex 字型系列
+  - 5 級間距系統
+
+  目標受眾：創意工作者（設計師、字型師、藝術家）
+
+  語言：繁體中文（台灣）
+
+rules:
+  proposal:
+    - 保持簡潔，1-2 頁以內
+    - 著重「為什麼」而非「如何」
+    - 明確列出新增與修改的 capabilities
+  specs:
+    - 使用 SHALL/MUST 表達規範性要求
+    - 每個 requirement 至少一個 scenario
+    - scenario 使用 WHEN/THEN 格式
+  design:
+    - 說明技術決策的理由
+    - 列出替代方案與權衡
+    - 標注風險與緩解措施
+  tasks:
+    - 使用 checkbox 格式（- [ ]）
+    - 任務粒度適中，可在單次工作階段完成
+    - 依相依性排序
