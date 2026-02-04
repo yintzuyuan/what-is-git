@@ -434,15 +434,97 @@ export class ConstellationController {
       }
     });
 
-    // 5. 新增星點（使用 radius 動畫取代 scale，避免閃爍）
-    starsToAdd.forEach((star, index) => {
+    // 5. 分離遠端副本和一般新增元素（遠端副本用位移動畫）
+    const isRemoteCopy = (id: string) => id.startsWith('r-');
+    const getLocalId = (remoteId: string) => remoteId.slice(2); // 去掉 "r-" 前綴
+
+    const remoteStars = starsToAdd.filter((s) => isRemoteCopy(s.id));
+    const regularStars = starsToAdd.filter((s) => !isRemoteCopy(s.id));
+    const remoteLines = linesToAdd.filter((l) => isRemoteCopy(l.id));
+    const regularLines = linesToAdd.filter((l) => !isRemoteCopy(l.id));
+
+    // 6. 計算一般連線和星點的動畫時間
+    const starAppearTimes: Map<string, number> = new Map();
+
+    // 已存在的星點：出現時間為 0
+    this.currentState.stars.forEach((star) => {
+      starAppearTimes.set(star.id, 0);
+    });
+
+    // 找出沒有連線指向的「起始星點」，它們先出現
+    const targetStarIds = new Set(regularLines.map((l) => l.to));
+    const startingStars = regularStars.filter((s) => !targetStarIds.has(s.id));
+    startingStars.forEach((star, index) => {
+      starAppearTimes.set(star.id, 0.3 + index * 0.1);
+    });
+
+    // 計算連線動畫參數
+    const lineAnimParams: Map<string, { startTime: number; duration: number; endTime: number }> =
+      new Map();
+
+    let maxIterations = regularLines.length + 1;
+    while (lineAnimParams.size < regularLines.length && maxIterations-- > 0) {
+      regularLines.forEach((line) => {
+        if (lineAnimParams.has(line.id)) return;
+
+        const fromAppearTime = starAppearTimes.get(line.from);
+        if (fromAppearTime === undefined) return;
+
+        const startTime = fromAppearTime + 0.3;
+        const el = this.createLineElement(line, targetState.stars);
+        if (!el) return;
+
+        const length = el.getTotalLength();
+        const duration = this.getLineDuration(length);
+        const endTime = startTime + duration;
+
+        lineAnimParams.set(line.id, { startTime, duration, endTime });
+
+        const currentTime = starAppearTimes.get(line.to);
+        if (currentTime === undefined || endTime < currentTime) {
+          starAppearTimes.set(line.to, endTime);
+        }
+
+        el.remove();
+      });
+    }
+
+    // 7. 新增一般連線動畫
+    regularLines.forEach((line) => {
+      const el = this.createLineElement(line, targetState.stars);
+      if (el) {
+        this.linesContainer?.appendChild(el);
+        this.lineElements.set(line.id, el);
+
+        const params = lineAnimParams.get(line.id);
+        if (this.reducedMotion || !params) {
+          gsap.set(el, { strokeDashoffset: 0, opacity: LINE_STYLES[line.type].opacity });
+        } else {
+          const length = el.getTotalLength();
+          gsap.set(el, {
+            strokeDasharray: length,
+            strokeDashoffset: length,
+            opacity: LINE_STYLES[line.type].opacity,
+          });
+          tl.to(
+            el,
+            { strokeDashoffset: 0, duration: params.duration, ease: 'power1.out' },
+            params.startTime
+          );
+        }
+      }
+    });
+
+    // 8. 新增一般星點動畫
+    regularStars.forEach((star) => {
       const el = this.createStarElement(star);
       const targetRadius = star.radius || STAR_STYLES[star.type].radius;
 
-      // 初始半徑為 0，透過動畫長大
       el.setAttribute('r', '0');
       this.starsContainer?.appendChild(el);
       this.starElements.set(star.id, el);
+
+      const appearTime = starAppearTimes.get(star.id) ?? 0.3;
 
       if (this.reducedMotion) {
         el.setAttribute('r', targetRadius.toString());
@@ -451,51 +533,127 @@ export class ConstellationController {
         gsap.set(el, { opacity: 0 });
         tl.to(
           el,
-          {
-            attr: { r: targetRadius },
-            opacity: 1,
-            duration: 0.4,
-            ease: 'back.out(1.7)',
-          },
-          0.3 + index * 0.1
+          { attr: { r: targetRadius }, opacity: 1, duration: 0.3, ease: 'back.out(1.7)' },
+          appearTime
         );
       }
     });
 
-    // 6. 新增連線（植物生長風格：來源星點完成後才開始生長）
-    linesToAdd.forEach((line) => {
-      const el = this.createLineElement(line, targetState.stars);
-      if (el) {
-        this.linesContainer?.appendChild(el);
-        this.lineElements.set(line.id, el);
+    // 9. 遠端副本動畫（使用 group 確保完全同步）
+    if (remoteStars.length > 0 || remoteLines.length > 0) {
+      // 計算一般分支動畫的結束時間
+      let maxRegularEndTime = 0;
 
-        if (this.reducedMotion) {
-          gsap.set(el, { strokeDashoffset: 0, opacity: LINE_STYLES[line.type].opacity });
-        } else {
-          const length = el.getTotalLength();
-          // 計算動畫起始時間：基於來源星點的動畫結束時間
-          const startTime = this.getLineStartTime(line, starsToAdd);
-          // 計算動畫持續時間：依連線長度動態調整
-          const duration = this.getLineDuration(length);
-
-          // 立即設定不透明度（不漸變），只動畫 strokeDashoffset
-          gsap.set(el, {
-            strokeDasharray: length,
-            strokeDashoffset: length,
-            opacity: LINE_STYLES[line.type].opacity,
-          });
-          tl.to(
-            el,
-            {
-              strokeDashoffset: 0,
-              duration,
-              ease: 'power1.out', // 更線性的生長感
-            },
-            startTime
-          );
+      // 檢查新增連線的結束時間
+      lineAnimParams.forEach((params) => {
+        if (params.endTime > maxRegularEndTime) {
+          maxRegularEndTime = params.endTime;
         }
+      });
+
+      // 檢查新增星點的結束時間
+      starAppearTimes.forEach((time, starId) => {
+        // 只計算新增的一般星點（不是遠端副本）
+        if (!isRemoteCopy(starId)) {
+          const endTime = time + 0.3;
+          if (endTime > maxRegularEndTime) {
+            maxRegularEndTime = endTime;
+          }
+        }
+      });
+
+      // 如果沒有新增的一般元素，使用基礎延遲讓動畫有時間差
+      if (maxRegularEndTime < 0.5) {
+        maxRegularEndTime = 0.5;
       }
-    });
+
+      // 計算位移量（從本地到遠端的偏移）
+      // 假設所有遠端副本的偏移量相同
+      const firstRemoteStar = remoteStars[0];
+      const localId = getLocalId(firstRemoteStar.id);
+      const localStar = targetState.stars.find((s) => s.id === localId);
+      const offsetX = localStar
+        ? ((firstRemoteStar.x - localStar.x) / 100) * this.viewBox.width
+        : 0;
+      const offsetY = localStar
+        ? ((firstRemoteStar.y - localStar.y) / 100) * this.viewBox.height
+        : 0;
+
+      // 創建 group 元素
+      const remoteGroup = document.createElementNS(SVG_NS, 'g');
+      remoteGroup.setAttribute('data-remote-group', 'true');
+
+      // 新增遠端連線到 group（先畫線，再畫點，這樣點會在上層）
+      remoteLines.forEach((line) => {
+        const remoteFromStar = targetState.stars.find((s) => s.id === line.from);
+        const remoteToStar = targetState.stars.find((s) => s.id === line.to);
+        if (!remoteFromStar || !remoteToStar) return;
+
+        const from = this.relativeToAbsolute(remoteFromStar.x, remoteFromStar.y);
+        const to = this.relativeToAbsolute(remoteToStar.x, remoteToStar.y);
+
+        const el = document.createElementNS(SVG_NS, 'path');
+        const style = LINE_STYLES[line.type];
+        const d = this.createMetroPath(from, to);
+
+        el.setAttribute('d', d);
+        el.setAttribute('stroke', style.stroke);
+        el.setAttribute('stroke-width', '2.5');
+        el.setAttribute('fill', 'none');
+        el.setAttribute('stroke-linecap', 'round');
+        el.setAttribute('stroke-linejoin', 'round');
+        el.setAttribute('data-id', line.id);
+        el.classList.add('constellation-line', `constellation-line--${line.type}`);
+        gsap.set(el, { opacity: style.opacity });
+
+        remoteGroup.appendChild(el);
+        this.lineElements.set(line.id, el);
+      });
+
+      // 新增遠端星點到 group
+      remoteStars.forEach((star) => {
+        const el = this.createStarElement(star);
+        const targetRadius = star.radius || STAR_STYLES[star.type].radius;
+        el.setAttribute('r', targetRadius.toString());
+        gsap.set(el, { opacity: 1 });
+
+        remoteGroup.appendChild(el);
+        this.starElements.set(star.id, el);
+      });
+
+      // 將 group 加入 DOM（加到 starsContainer 的父元素，確保在正確層級）
+      const svgRoot = this.starsContainer?.parentElement;
+      if (svgRoot) {
+        svgRoot.appendChild(remoteGroup);
+      }
+
+      // 動畫：group 從本地位置滑動到遠端位置
+      const remoteAnimStartTime = maxRegularEndTime + 0.2;
+
+      if (this.reducedMotion) {
+        // 無動畫
+      } else {
+        // 初始位置：向左偏移（回到本地位置）
+        gsap.set(remoteGroup, {
+          x: -offsetX,
+          y: -offsetY,
+          opacity: 0,
+        });
+
+        // 淡入 + 滑動到最終位置
+        tl.to(
+          remoteGroup,
+          {
+            x: 0,
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: 'power2.out',
+          },
+          remoteAnimStartTime
+        );
+      }
+    }
 
     // 更新當前狀態
     this.currentState = targetState;
@@ -578,9 +736,11 @@ export class ConstellationController {
     }
 
     // 斜向連接：使用二次貝茲曲線
-    // 控制點放在 (to.x, from.y)，讓曲線先水平彎出再垂直到達
-    const controlX = to.x;
-    const controlY = from.y;
+    // 根據方向決定控制點位置：
+    // - 向右（分岔）：先水平再垂直 → 控制點 (to.x, from.y)
+    // - 向左（合併）：先垂直再水平 → 控制點 (from.x, to.y)
+    const controlX = dx > 0 ? to.x : from.x;
+    const controlY = dx > 0 ? from.y : to.y;
 
     return `M ${from.x} ${from.y} Q ${controlX} ${controlY} ${to.x} ${to.y}`;
   }
