@@ -106,15 +106,15 @@ const {
 
     <!-- 進度指示點 -->
     <nav class="progress" aria-label="章節導航">
-      <button class="progress__dot is-active" data-target="intro" aria-label="序章"></button>
-      <button class="progress__dot" data-target="ch1-root" aria-label="第一章"></button>
-      <button class="progress__dot" data-target="ch2-trunk" aria-label="第二章"></button>
-      <button class="progress__dot" data-target="ch3-branch" aria-label="第三章"></button>
-      <button class="progress__dot" data-target="ch4-sync" aria-label="第四章"></button>
-      <button class="progress__dot" data-target="ch5-issue" aria-label="第五章"></button>
-      <button class="progress__dot" data-target="ch6-pr" aria-label="第六章"></button>
-      <button class="progress__dot" data-target="ch7-merge" aria-label="第七章"></button>
-      <button class="progress__dot" data-target="next-steps" aria-label="結語"></button>
+      <button class="progress__dot is-active" data-target="intro" data-color="cyan" data-title="序章" aria-label="序章"></button>
+      <button class="progress__dot" data-target="ch1-root" data-color="cyan" data-title="紮根" aria-label="第一章：紮根"></button>
+      <button class="progress__dot" data-target="ch2-trunk" data-color="cyan" data-title="累積" aria-label="第二章：累積"></button>
+      <button class="progress__dot" data-target="ch3-branch" data-color="purple" data-title="分支" aria-label="第三章：分支"></button>
+      <button class="progress__dot" data-target="ch4-sync" data-color="cyan" data-title="同步" aria-label="第四章：同步"></button>
+      <button class="progress__dot" data-target="ch5-issue" data-color="cyan" data-title="任務" aria-label="第五章：任務"></button>
+      <button class="progress__dot" data-target="ch6-pr" data-color="purple" data-title="審查" aria-label="第六章：審查"></button>
+      <button class="progress__dot" data-target="ch7-merge" data-color="gold" data-title="合併" aria-label="第七章：合併"></button>
+      <button class="progress__dot" data-target="next-steps" data-color="cyan" data-title="結語" aria-label="結語"></button>
     </nav>
 
     <!-- CLI 鏡像 -->
@@ -186,25 +186,36 @@ const {
     if (!cliMirror || !cliCommand) return;
 
     if (command) {
+      // 先加入 blur 效果
+      cliCommand.classList.add('is-transitioning');
+
       gsap.to(cliMirror, {
         opacity: 0,
-        y: 10,
-        duration: 0.15,
+        scale: 0.95,
+        duration: 0.12,
+        ease: 'power2.in',
         onComplete: () => {
           cliCommand.textContent = command;
           cliMirror.classList.add('is-visible');
+
           gsap.to(cliMirror, {
             opacity: 1,
-            y: 0,
-            duration: 0.3,
+            scale: 1,
+            duration: 0.25,
             ease: 'power2.out',
+            onComplete: () => {
+              // 移除 blur 效果
+              cliCommand.classList.remove('is-transitioning');
+            },
           });
         },
       });
     } else {
       gsap.to(cliMirror, {
         opacity: 0,
-        duration: 0.3,
+        scale: 0.95,
+        duration: 0.25,
+        ease: 'power2.in',
         onComplete: () => {
           cliMirror.classList.remove('is-visible');
         },
