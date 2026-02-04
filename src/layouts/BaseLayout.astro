@@ -137,6 +137,7 @@ const {
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { constellation } from '../scripts/constellation';
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -149,10 +150,16 @@ const {
   const chapters = document.querySelectorAll('.chapter');
 
   // ═══════════════════════════════════════════
+  // 初始化星座控制器
+  // ═══════════════════════════════════════════
+  constellation.init();
+
+  // ═══════════════════════════════════════════
   // 章節捲動觸發
   // ═══════════════════════════════════════════
   chapters.forEach((chapter, index) => {
     const cli = chapter.getAttribute('data-cli');
+    const chapterId = chapter.id;
 
     ScrollTrigger.create({
       trigger: chapter,
@@ -162,10 +169,12 @@ const {
         updateCli(cli);
         updateProgress(index);
         revealChapter(chapter);
+        constellation.transitionTo(chapterId);
       },
       onEnterBack: () => {
         updateCli(cli);
         updateProgress(index);
+        constellation.transitionTo(chapterId);
       },
     });
   });
