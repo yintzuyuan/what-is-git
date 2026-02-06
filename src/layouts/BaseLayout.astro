@@ -124,6 +124,12 @@ const {
       </svg>
     </div>
 
+    <!-- 行動裝置進度條（僅 <1024px 顯示） -->
+    <div class="mobile-progress" aria-hidden="true">
+      <div class="mobile-progress__bar"></div>
+      <span class="mobile-progress__label"></span>
+    </div>
+
     <!-- 進度指示點 -->
     <nav class="progress" aria-label="章節導航">
       <button class="progress__dot is-active" data-target="intro" data-color="cyan" data-title="序章" aria-label="序章"></button>
@@ -160,6 +166,8 @@ const {
   // ═══════════════════════════════════════════
   const progressDots = document.querySelectorAll('.progress__dot');
   const chapters = document.querySelectorAll('.chapter');
+  const mobileProgressBar = document.querySelector('.mobile-progress__bar') as HTMLElement;
+  const mobileProgressLabel = document.querySelector('.mobile-progress__label') as HTMLElement;
 
   // ═══════════════════════════════════════════
   // 初始化星座控制器
@@ -192,9 +200,21 @@ const {
   // 進度指示更新
   // ═══════════════════════════════════════════
   function updateProgress(activeIndex: number) {
+    // 更新桌面版進度點
     progressDots.forEach((dot, i) => {
       dot.classList.toggle('is-active', i === activeIndex);
     });
+
+    // 更新行動裝置進度條
+    if (mobileProgressBar && mobileProgressLabel) {
+      const progress = ((activeIndex + 1) / chapters.length) * 100;
+      mobileProgressBar.style.width = `${progress}%`;
+
+      // 取得當前章節標題
+      const activeDot = progressDots[activeIndex];
+      const title = activeDot?.getAttribute('data-title') || '';
+      mobileProgressLabel.textContent = title;
+    }
   }
 
   // ═══════════════════════════════════════════

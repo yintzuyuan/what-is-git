@@ -66,6 +66,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
 }
 
 body {
@@ -144,6 +145,26 @@ code {
   padding: var(--space-xl) var(--space-lg);
   position: relative;
   z-index: 1;
+
+  /* 強制吸附：捲動只能停在章節位置 */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+
+  /* 章節邊界過渡效果：上下漸層遮罩 */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
 }
 
 .chapter__inner {
@@ -282,6 +303,47 @@ code {
 }
 
 /* ── 5. 進度指示 ── */
+
+/* 行動裝置頂部進度條（僅 <1024px 顯示） */
+.mobile-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  display: block;
+}
+
+.mobile-progress__bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--star-cyan), var(--star-purple));
+  transition: width var(--duration-normal) var(--ease-out-expo);
+  box-shadow: 0 0 8px rgba(94, 234, 212, 0.4);
+}
+
+.mobile-progress__label {
+  position: absolute;
+  top: calc(3px + var(--space-sm));
+  left: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-ghost);
+  opacity: 0.8;
+  transition: opacity var(--duration-fast) ease-out;
+}
+
+@media (min-width: 1024px) {
+  .mobile-progress {
+    display: none;
+  }
+}
+
+/* 桌面版進度點 */
 .progress {
   position: fixed;
   left: var(--space-lg);
