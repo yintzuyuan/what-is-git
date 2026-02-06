@@ -377,13 +377,18 @@ code {
   line-height: 1;
 }
 
-/* Issue 圖標：綠色 */
+/* Issue 圖標：綠色（Open Issue） */
 .inline-card--issue .inline-card__icon {
   color: #238636;
 }
 
-/* PR 圖標：紫色 */
+/* PR 圖標：綠色（Open PR，準備合併） */
 .inline-card--pr .inline-card__icon {
+  color: #238636;
+}
+
+/* Merged 圖標：紫色（已合併） */
+.inline-card--merged .inline-card__icon {
   color: #8957e5;
 }
 
@@ -576,6 +581,51 @@ code {
 .constellation-line--merge {
   stroke: var(--star-gold);
   opacity: 0.6;
+}
+
+/* 星座標籤（foreignObject 容器） */
+.constellation-label-fo {
+  overflow: visible;
+}
+
+/* 星座標籤（卡片內容） */
+.constellation-label {
+  pointer-events: auto;
+  font-size: 0.875rem;
+  margin: 0;
+  background: rgba(22, 27, 34, 0.98);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: var(--space-sm) var(--space-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.constellation-label .inline-card__header {
+  padding-bottom: var(--space-xs);
+  margin-bottom: var(--space-xs);
+}
+
+.constellation-label .inline-card__title {
+  font-size: 0.875rem;
+}
+
+.constellation-label .inline-card__body {
+  font-size: 0.8125rem;
+}
+
+/* 小螢幕：隱藏星座標籤 */
+@media (max-width: 768px) {
+  .constellation-label-fo {
+    display: none;
+  }
+}
+
+/* 大螢幕：隱藏文字區卡片 */
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none;
+  }
 }
 
 /* ── 8. 動畫類別 ── */

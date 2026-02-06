@@ -11,6 +11,8 @@ import { gsap } from 'gsap';
 
 export type StarType = 'main' | 'feature' | 'merge' | 'conflict' | 'hero';
 export type LineType = 'main' | 'feature' | 'merge';
+export type LabelType = 'issue' | 'pr' | 'merged';
+export type LabelPosition = 'left' | 'right' | 'top' | 'bottom';
 
 export interface Star {
   id: string;
@@ -27,9 +29,19 @@ export interface Line {
   type: LineType;
 }
 
+export interface Label {
+  id: string;
+  anchorStar: string; // 依附的星點 ID
+  position: LabelPosition;
+  type: LabelType;
+  title: string;
+  body: string;
+}
+
 export interface ConstellationState {
   stars: Star[];
   lines: Line[];
+  labels?: Label[];
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -153,18 +165,27 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
       { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
     ],
+    labels: [
+      {
+        id: 'issue-label',
+        anchorStar: 'c3',
+        position: 'left',
+        type: 'issue',
+        title: '首頁載入太慢',
+        body: '圖片沒有壓縮，需要優化',
+      },
+    ],
   },
 
   'ch6-pr': {
-    // 間距 12：root 76, c1 64, c2 52, c3 40, f1 40, f2 28, f3 16
+    // 間距 12：root 76, c1 64, c2 52, c3 40, f1 40, f2 28
     stars: [
       { id: 'root', x: M, y: 76, type: 'main' },
       { id: 'c1', x: M, y: 64, type: 'main' },
       { id: 'c2', x: M, y: 52, type: 'main' },
       { id: 'c3', x: M, y: 40, type: 'main' },
       { id: 'f1', x: F, y: 40, type: 'feature' },
-      { id: 'f2', x: F, y: 28, type: 'feature' },
-      { id: 'f3', x: F, y: 16, type: 'feature' }, // 準備合併
+      { id: 'f2', x: F, y: 28, type: 'feature' }, // 準備合併
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -172,7 +193,16 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
       { id: 'l4', from: 'c2', to: 'f1', type: 'feature' },
       { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
-      { id: 'l6', from: 'f2', to: 'f3', type: 'feature' },
+    ],
+    labels: [
+      {
+        id: 'pr-label',
+        anchorStar: 'f2',
+        position: 'left',
+        type: 'pr',
+        title: '新增深色模式',
+        body: 'feat/dark-mode → main',
+      },
     ],
   },
 
@@ -195,6 +225,16 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
       { id: 'l6', from: 'c3', to: 'merge', type: 'main' },
       { id: 'l7', from: 'f2', to: 'merge', type: 'merge' },
+    ],
+    labels: [
+      {
+        id: 'merged-label',
+        anchorStar: 'merge',
+        position: 'left',
+        type: 'merged',
+        title: '新增深色模式',
+        body: 'feat/dark-mode → main',
+      },
     ],
   },
 
@@ -236,9 +276,11 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 export class ConstellationController {
   private starsContainer: SVGGElement | null = null;
   private linesContainer: SVGGElement | null = null;
-  private currentState: ConstellationState = { stars: [], lines: [] };
+  private labelsContainer: SVGGElement | null = null;
+  private currentState: ConstellationState = { stars: [], lines: [], labels: [] };
   private starElements: Map<string, SVGCircleElement> = new Map();
   private lineElements: Map<string, SVGPathElement> = new Map();
+  private labelElements: Map<string, SVGForeignObjectElement> = new Map();
   private rippleElements: Map<string, SVGCircleElement[]> = new Map(); // hero 漣漪
   private viewBox = { width: 1920, height: 1080 };
   private reducedMotion = false;
@@ -253,10 +295,18 @@ export class ConstellationController {
   init(): void {
     this.starsContainer = document.getElementById('constellation-stars') as SVGGElement | null;
     this.linesContainer = document.getElementById('constellation-lines') as SVGGElement | null;
+    this.labelsContainer = document.getElementById('constellation-labels') as SVGGElement | null;
 
     if (!this.starsContainer || !this.linesContainer) {
       console.warn('Constellation containers not found');
       return;
+    }
+
+    // 如果沒有 labels container，動態建立
+    if (!this.labelsContainer && this.starsContainer?.parentElement) {
+      this.labelsContainer = document.createElementNS(SVG_NS, 'g');
+      this.labelsContainer.setAttribute('id', 'constellation-labels');
+      this.starsContainer.parentElement.appendChild(this.labelsContainer);
     }
 
     // 監聯視窗大小變化
@@ -739,8 +789,44 @@ export class ConstellationController {
       }
     }
 
+    // 10. 處理標籤的新增/移除
+    const currentLabels = this.currentState.labels || [];
+    const targetLabels = targetState.labels || [];
+    const labelDiff = this.diffItems(currentLabels, targetLabels);
+
+    // 移除舊標籤
+    labelDiff.toRemove.forEach((label) => {
+      const el = this.labelElements.get(label.id);
+      if (el) {
+        if (this.reducedMotion) {
+          el.remove();
+        } else {
+          tl.to(el, { opacity: 0, duration: 0.2 }, 0);
+          tl.add(() => el.remove(), 0.2);
+        }
+        this.labelElements.delete(label.id);
+      }
+    });
+
+    // 新增新標籤（延遲到星點動畫完成後）
+    const labelStartTime = 0.5;
+    labelDiff.toAdd.forEach((label) => {
+      const el = this.createLabelElement(label, targetState.stars);
+      if (el) {
+        this.labelsContainer?.appendChild(el);
+        this.labelElements.set(label.id, el);
+
+        if (this.reducedMotion) {
+          gsap.set(el, { opacity: 1 });
+        } else {
+          gsap.set(el, { opacity: 0 });
+          tl.to(el, { opacity: 1, duration: 0.4, ease: 'power2.out' }, labelStartTime);
+        }
+      }
+    });
+
     // 更新當前狀態
-    this.currentState = targetState;
+    this.currentState = { ...targetState, labels: targetLabels };
   }
 
   /**
@@ -782,6 +868,86 @@ export class ConstellationController {
     const toKeep = target.filter((item) => currentIds.has(item.id));
 
     return { toAdd, toRemove, toKeep };
+  }
+
+  /**
+   * 建立標籤 SVG foreignObject 元素
+   * 使用 DOM API 而非 innerHTML 避免 XSS 風險
+   */
+  private createLabelElement(label: Label, stars: Star[]): SVGForeignObjectElement | null {
+    const anchor = stars.find((s) => s.id === label.anchorStar);
+    if (!anchor) {
+      console.warn(`Cannot find anchor star for label: ${label.id}`);
+      return null;
+    }
+
+    const { x, y } = this.relativeToAbsolute(anchor.x, anchor.y);
+
+    // 標籤寬高
+    const width = 180;
+    const height = 80;
+
+    // 依據位置計算偏移量
+    let offsetX = 0;
+    let offsetY = 0;
+    switch (label.position) {
+      case 'left':
+        offsetX = -width - 20;
+        offsetY = -height / 2;
+        break;
+      case 'right':
+        offsetX = 20;
+        offsetY = -height / 2;
+        break;
+      case 'top':
+        offsetX = -width / 2;
+        offsetY = -height - 20;
+        break;
+      case 'bottom':
+        offsetX = -width / 2;
+        offsetY = 20;
+        break;
+    }
+
+    // 建立 foreignObject
+    const fo = document.createElementNS(SVG_NS, 'foreignObject');
+    fo.setAttribute('x', (x + offsetX).toString());
+    fo.setAttribute('y', (y + offsetY).toString());
+    fo.setAttribute('width', width.toString());
+    fo.setAttribute('height', height.toString());
+    fo.setAttribute('data-id', label.id);
+    fo.classList.add('constellation-label-fo');
+
+    // 使用 DOM API 建構卡片
+    const card = document.createElement('div');
+    card.className = `constellation-label inline-card inline-card--${label.type}`;
+
+    const header = document.createElement('div');
+    header.className = 'inline-card__header';
+
+    const icon = document.createElement('i');
+    // 圖示依據類型設定（與 GitHub 狀態一致）
+    // issue: 綠色圓點、pr: 綠色 PR 圖示（準備合併）、merged: 紫色 merge 圖示（已合併）
+    const iconClasses: Record<LabelType, string> = {
+      issue: 'ph-fill ph-circle inline-card__icon',
+      pr: 'ph ph-git-pull-request inline-card__icon',
+      merged: 'ph ph-git-merge inline-card__icon',
+    };
+    icon.className = iconClasses[label.type];
+
+    const title = document.createElement('h3');
+    title.className = 'inline-card__title';
+    title.textContent = label.title;
+
+    const body = document.createElement('p');
+    body.className = 'inline-card__body';
+    body.textContent = label.body;
+
+    header.append(icon, title);
+    card.append(header, body);
+    fo.appendChild(card);
+
+    return fo;
   }
 
   /**
@@ -907,11 +1073,13 @@ export class ConstellationController {
   clear(): void {
     this.starElements.forEach((el) => el.remove());
     this.lineElements.forEach((el) => el.remove());
+    this.labelElements.forEach((el) => el.remove());
     this.rippleElements.forEach((ripples) => ripples.forEach((r) => r.remove()));
     this.starElements.clear();
     this.lineElements.clear();
+    this.labelElements.clear();
     this.rippleElements.clear();
-    this.currentState = { stars: [], lines: [] };
+    this.currentState = { stars: [], lines: [], labels: [] };
   }
 }
 

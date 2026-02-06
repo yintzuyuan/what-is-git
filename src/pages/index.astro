@@ -197,8 +197,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           或討論新功能。
         </p>
 
-        <!-- 內嵌概念卡片 -->
-        <div class="inline-card inline-card--issue reveal reveal-delay-3">
+        <!-- 內嵌概念卡片（小螢幕顯示，大螢幕由星座標籤取代） -->
+        <div class="inline-card inline-card--issue mobile-only reveal reveal-delay-3">
           <div class="inline-card__header">
             <i class="ph-fill ph-circle inline-card__icon"></i>
             <h3 class="inline-card__title">首頁載入太慢</h3>
@@ -239,8 +239,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           讓自己或團隊成員審查變更。
         </p>
 
-        <!-- 內嵌概念卡片 -->
-        <div class="inline-card inline-card--pr reveal reveal-delay-3">
+        <!-- 內嵌概念卡片（小螢幕顯示，大螢幕由星座標籤取代） -->
+        <div class="inline-card inline-card--pr mobile-only reveal reveal-delay-3">
           <div class="inline-card__header">
             <i class="ph ph-git-pull-request inline-card__icon"></i>
             <h3 class="inline-card__title">新增深色模式</h3>
@@ -281,8 +281,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           如果有衝突，Git 會提示你手動解決。
         </p>
 
+        <!-- 內嵌概念卡片（小螢幕顯示，大螢幕由星座標籤取代） -->
+        <div class="inline-card inline-card--merged mobile-only reveal reveal-delay-3">
+          <div class="inline-card__header">
+            <i class="ph ph-git-merge inline-card__icon"></i>
+            <h3 class="inline-card__title">新增深色模式</h3>
+          </div>
+          <p class="inline-card__body">
+            feat/dark-mode → main
+          </p>
+        </div>
+
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-3">
+        <div class="cli-block reveal reveal-delay-4">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
             <code class="cli-block__command">git merge 分支名稱</code>
@@ -294,7 +305,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
 
         <!-- 範例 -->
-        <div class="inline-callout reveal reveal-delay-4">
+        <div class="inline-callout reveal reveal-delay-5">
           <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
           <p>
             範例：<code>git merge feat/dark-mode</code>
