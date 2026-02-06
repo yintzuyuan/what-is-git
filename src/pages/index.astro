@@ -33,20 +33,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="chapter" id="ch1-root">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第一章</span>
-      <h2 class="chapter__title reveal-title">秩序的紮根</h2>
-      <p class="chapter__subtitle reveal reveal-delay-1">Root</p>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">init</span>
+        <span class="chapter__title-zh">初始化</span>
+      </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          一切從這裡開始。<code>git init</code> 確立了<strong>邏輯的零點</strong>——
-          你的專案從此有了「記憶」。
-        </p>
-        <p class="reveal reveal-delay-3">
-          這不只是一個資料夾。<br />
-          這是一個<strong>有時間感的空間</strong>。
+          在專案資料夾執行 <code>git init</code>，<br />
+          Git 就會開始追蹤這個資料夾的變化。
         </p>
 
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-4">
+        <div class="cli-block reveal reveal-delay-3">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
             <code class="cli-block__command">git init</code>
@@ -66,27 +64,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="chapter" id="ch2-trunk">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第二章</span>
-      <h2 class="chapter__title reveal-title">線性的累積</h2>
-      <p class="chapter__subtitle reveal reveal-delay-1">Trunk</p>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">commit</span>
+        <span class="chapter__title-zh">提交</span>
+      </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          每一次 <code>commit</code>，都是一個有意義的<strong>存檔點</strong>。
+          每一次 <code>commit</code> 都是一個存檔點，<br />
+          搭配一段訊息說明這次改了什麼。
         </p>
-        <p class="reveal reveal-delay-3">
-          時間在這裡是垂直的——<br />
-          最舊的在下，最新的在上，像年輪一樣層層疊加。
-        </p>
-
-        <!-- 內嵌 callout -->
-        <div class="inline-callout reveal reveal-delay-4">
-          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
-          <p>
-            好的 commit 訊息回答的是「為什麼」，而非「做了什麼」。
-          </p>
-        </div>
 
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-5">
+        <div class="cli-block reveal reveal-delay-3">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
             <code class="cli-block__command">git commit -m "訊息"</code>
@@ -95,6 +84,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <i class="ph ph-copy cli-block__copy-icon"></i>
             <span>複製</span>
           </button>
+        </div>
+
+        <!-- 範例 -->
+        <div class="inline-callout reveal reveal-delay-4">
+          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <p>
+            範例：<code>git commit -m "fix: 修正標題字型大小"</code>
+          </p>
         </div>
       </div>
     </div>
@@ -106,30 +103,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="chapter" id="ch3-branch">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第三章</span>
-      <h2 class="chapter__title reveal-title">維度的偏轉</h2>
-      <p class="chapter__subtitle reveal reveal-delay-1">Branching</p>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">branch</span>
+        <span class="chapter__title-zh">分支</span>
+      </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          分支不是「複製」，而是<strong>平行宇宙</strong>。
-        </p>
-        <p class="reveal reveal-delay-3">
-          你可以在這裡安全地嘗試，<br />
-          不會破壞原本的世界。
-        </p>
-        <p class="reveal reveal-delay-4">
-          這是<strong>非破壞性創作</strong>的核心概念。
+          建立分支，在獨立的空間嘗試新想法，<br />
+          不會影響主線的穩定版本。
         </p>
 
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-5">
+        <div class="cli-block reveal reveal-delay-3">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
-            <code class="cli-block__command">git checkout -b feature</code>
+            <code class="cli-block__command">git checkout -b 分支名稱</code>
           </div>
           <button class="cli-block__copy" type="button" aria-label="複製指令">
             <i class="ph ph-copy cli-block__copy-icon"></i>
             <span>複製</span>
           </button>
+        </div>
+
+        <!-- 範例 -->
+        <div class="inline-callout reveal reveal-delay-4">
+          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <p>
+            範例：<code>git checkout -b add-dark-mode</code>
+          </p>
         </div>
       </div>
     </div>
@@ -141,20 +142,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="chapter" id="ch4-sync">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第四章</span>
-      <h2 class="chapter__title reveal-title">空間的共鳴</h2>
-      <p class="chapter__subtitle reveal reveal-delay-1">Sync</p>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">push</span>
+        <span class="chapter__title-zh">推送</span>
+      </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          <code>push</code> 是<strong>手動版的 Google Drive</strong>——<br />
-          你決定何時備份，何時同步。
-        </p>
-        <p class="reveal reveal-delay-3">
-          本地與遠端，兩個空間開始共鳴。<br />
-          你的創作不再只存在於一台電腦上。
+          把本地的 commit 上傳到遠端伺服器，<br />
+          作為備份，也方便與他人協作。
         </p>
 
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-4">
+        <div class="cli-block reveal reveal-delay-3">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
             <code class="cli-block__command">git push origin main</code>
@@ -174,36 +173,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="chapter" id="ch5-issue">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第五章</span>
-      <h2 class="chapter__title reveal-title">下一步要去哪</h2>
-      <p class="chapter__subtitle reveal reveal-delay-1">Issue</p>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">issue</span>
+        <span class="chapter__title-zh">議題</span>
+      </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          Issue 就像在星圖上標記目的地——<br />
-          「<strong>接下來我要往這裡走</strong>」。
+          用 issue 記錄待辦事項、回報問題、<br />
+          或討論新功能。
         </p>
 
         <!-- 內嵌概念卡片 -->
         <div class="inline-card inline-card--issue reveal reveal-delay-3">
           <div class="inline-card__header">
             <i class="ph-fill ph-circle inline-card__icon"></i>
-            <h3 class="inline-card__title">Issue</h3>
+            <h3 class="inline-card__title">首頁載入太慢</h3>
           </div>
           <p class="inline-card__body">
-            「接下來要做什麼」的備忘錄
-          </p>
-        </div>
-
-        <!-- 內嵌 callout -->
-        <div class="inline-callout reveal reveal-delay-4">
-          <i class="ph ph-paperclip inline-callout__icon"></i>
-          <p>
-            在開始動工前先開個 Issue，<br />
-            讓未來的自己知道當時在想什麼。
+            圖片沒有壓縮，需要優化
           </p>
         </div>
 
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-5">
+        <div class="cli-block reveal reveal-delay-4">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
             <code class="cli-block__command">gh issue create</code>
@@ -223,36 +215,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="chapter" id="ch6-pr">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第六章</span>
-      <h2 class="chapter__title reveal-title">匯流前的回望</h2>
-      <p class="chapter__subtitle reveal reveal-delay-1">Pull Request</p>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">pull request</span>
+        <span class="chapter__title-zh">拉取請求</span>
+      </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          分支走到這裡，準備匯入主線。<br />
-          PR 讓你停下來看看：<strong>這段路走得如何？</strong>
+          分支完成後，發起 pull request 請求合併，<br />
+          讓自己或團隊成員審查變更。
         </p>
 
         <!-- 內嵌概念卡片 -->
         <div class="inline-card inline-card--pr reveal reveal-delay-3">
           <div class="inline-card__header">
             <i class="ph ph-git-pull-request inline-card__icon"></i>
-            <h3 class="inline-card__title">Pull Request</h3>
+            <h3 class="inline-card__title">新增深色模式</h3>
           </div>
           <p class="inline-card__body">
-            合併前的最後確認
-          </p>
-        </div>
-
-        <!-- 內嵌 callout -->
-        <div class="inline-callout reveal reveal-delay-4">
-          <i class="ph ph-chat-circle inline-callout__icon"></i>
-          <p>
-            不是為了挑錯，<br />
-            而是給自己一個喘息、回顧的機會。
+            add-dark-mode → main
           </p>
         </div>
 
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-5">
+        <div class="cli-block reveal reveal-delay-4">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
             <code class="cli-block__command">gh pr create</code>
@@ -272,30 +257,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="chapter" id="ch7-merge">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第七章</span>
-      <h2 class="chapter__title reveal-title">邏輯的歸一</h2>
-      <p class="chapter__subtitle reveal reveal-delay-1">Convergence</p>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">merge</span>
+        <span class="chapter__title-zh">合併</span>
+      </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          當兩條線交會，可能會產生<strong>衝突</strong>。
-        </p>
-        <p class="reveal reveal-delay-3">
-          但衝突不是問題——<br />
-          「<strong>決策</strong>」才是合併的本質。
-        </p>
-        <p class="reveal reveal-delay-4">
-          選擇，然後繼續前進。
+          審查通過後，將分支合併回主線。<br />
+          如果有衝突，Git 會提示你手動解決。
         </p>
 
         <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-5">
+        <div class="cli-block reveal reveal-delay-3">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
-            <code class="cli-block__command">git merge feature</code>
+            <code class="cli-block__command">git merge 分支名稱</code>
           </div>
           <button class="cli-block__copy" type="button" aria-label="複製指令">
             <i class="ph ph-copy cli-block__copy-icon"></i>
             <span>複製</span>
           </button>
+        </div>
+
+        <!-- 範例 -->
+        <div class="inline-callout reveal reveal-delay-4">
+          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <p>
+            範例：<code>git merge add-dark-mode</code>
+          </p>
         </div>
       </div>
     </div>

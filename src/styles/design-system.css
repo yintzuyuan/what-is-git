@@ -123,10 +123,13 @@ code {
   font-family: var(--font-mono);
   font-size: 0.9em;
   color: var(--star-cyan);
-  background: rgba(94, 234, 212, 0.1);
-  padding: 0.2em 0.4em;
-  border-radius: 6px;
-  border: 1px solid rgba(94, 234, 212, 0.15);
+}
+
+/* CLI 區塊內的 code 不需要額外樣式 */
+.cli-block code {
+  background: none;
+  padding: 0;
+  border: none;
 }
 
 /* ── 3. 章節容器 ── */
@@ -168,15 +171,25 @@ code {
 }
 
 .chapter__title {
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-sm);
 }
 
-.chapter__subtitle {
-  font-style: italic;
+/* 字典式雙語標題 */
+.chapter__title-en {
+  font-family: var(--font-mono);
   font-size: 1.125rem;
-  color: var(--text-ghost);
-  margin-bottom: var(--space-lg);
-  margin-top: calc(var(--space-sm) * -1);
+  font-weight: 500;
+  color: var(--star-cyan);
+  letter-spacing: 0.02em;
+}
+
+.chapter__title-zh {
+  font-size: 1.5rem;
+  color: var(--text-bright);
 }
 
 .chapter__body {
