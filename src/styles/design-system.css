@@ -621,6 +621,28 @@ code {
   }
 }
 
+/* 星點訊息（低調示意用途） */
+.constellation-message-fo {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.constellation-message {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;  /* 14px */
+  color: var(--text-ghost);
+  white-space: nowrap;
+  opacity: 0.5;
+  letter-spacing: 0.02em;
+}
+
+/* 小螢幕：隱藏訊息 */
+@media (max-width: 768px) {
+  .constellation-message-fo {
+    display: none;
+  }
+}
+
 /* 大螢幕：隱藏文字區卡片 */
 @media (min-width: 769px) {
   .mobile-only {

@@ -20,6 +20,7 @@ export interface Star {
   y: number; // 相對座標 0-100
   type: StarType;
   radius?: number; // 可選，預設依類型決定
+  message?: string; // 可選：提交訊息（打字機效果顯示）
 }
 
 export interface Line {
@@ -90,18 +91,26 @@ export const chapterStates: Record<string, ConstellationState> = {
     lines: [],
   },
 
+  // ═══════════════════════════════════════════════════════════════
+  // 座標設計原則：
+  // - 統一間距 9，從 y:76 開始（留空間給後續節點）
+  // - 「只進不退」：已出現的節點不消失
+  // - 分支從 c3（最新主線節點）長出
+  // ═══════════════════════════════════════════════════════════════
+
   'ch1-root': {
-    stars: [{ id: 'root', x: M, y: 70, type: 'hero' }], // hero 類型：有漣漪提示
+    // root: y=76
+    stars: [{ id: 'root', x: M, y: 76, type: 'hero', message: 'init: 專案初始化' }],
     lines: [],
   },
 
   'ch2-trunk': {
-    // 間距 12：70, 58, 46, 34
+    // 間距 9：root 76, c1 67, c2 58, c3 49
     stars: [
-      { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 58, type: 'main' },
-      { id: 'c2', x: M, y: 46, type: 'main' },
-      { id: 'c3', x: M, y: 34, type: 'main' },
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -111,59 +120,70 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch3-branch': {
-    // 間距 12：root 70, c1 58, c2 46, f1 34, f2 22
+    // 保留 c3，分支從 c3 長出
+    // 間距 9：root 76, c1 67, c2 58, c3 49, f1 40, f2 31
     stars: [
-      { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 58, type: 'main' },
-      { id: 'c2', x: M, y: 46, type: 'main' },
-      { id: 'f1', x: F, y: 34, type: 'feature' },
-      { id: 'f2', x: F, y: 22, type: 'feature' },
-    ],
-    lines: [
-      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
-      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
-      { id: 'l3', from: 'c2', to: 'f1', type: 'feature' },
-      { id: 'l4', from: 'f1', to: 'f2', type: 'feature' },
-    ],
-  },
-
-  'ch4-sync': {
-    // 同 ch3 + 遠端副本
-    stars: [
-      { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 58, type: 'main' },
-      { id: 'c2', x: M, y: 46, type: 'main' },
-      { id: 'f1', x: F, y: 34, type: 'feature' },
-      { id: 'f2', x: F, y: 22, type: 'feature' },
-      // 遠端副本（右側）
-      { id: 'r-root', x: R, y: 70, type: 'main' },
-      { id: 'r-c1', x: R, y: 58, type: 'main' },
-      { id: 'r-c2', x: R, y: 46, type: 'main' },
-    ],
-    lines: [
-      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
-      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
-      { id: 'l3', from: 'c2', to: 'f1', type: 'feature' },
-      { id: 'l4', from: 'f1', to: 'f2', type: 'feature' },
-      // 遠端連線
-      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'main' },
-      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'main' },
-    ],
-  },
-
-  'ch5-issue': {
-    // 只有主線：Issue 是「標記目的地」，還沒開始分支
-    // 間距 12：70, 58, 46, 34
-    stars: [
-      { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 58, type: 'main' },
-      { id: 'c2', x: M, y: 46, type: 'main' },
-      { id: 'c3', x: M, y: 34, type: 'main' },
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: 31, type: 'feature', message: 'style: 調整配色方案' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
       { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
       { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' }, // 分支從 c3 長出
+      { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
+    ],
+  },
+
+  'ch4-sync': {
+    // 同 ch3 + 遠端副本（只複製主線）
+    stars: [
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: 31, type: 'feature', message: 'style: 調整配色方案' },
+      // 遠端副本（右側）— 不顯示訊息避免視覺重複
+      { id: 'r-root', x: R, y: 76, type: 'main' },
+      { id: 'r-c1', x: R, y: 67, type: 'main' },
+      { id: 'r-c2', x: R, y: 58, type: 'main' },
+      { id: 'r-c3', x: R, y: 49, type: 'main' },
+    ],
+    lines: [
+      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
+      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
+      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
+      { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
+      // 遠端連線
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'main' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'main' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'main' },
+    ],
+  },
+
+  'ch5-issue': {
+    // 保留分支（只進不退），Issue 標籤錨定到 c3
+    // Issue 是「規劃下一步」，不是「倒退到分支前」
+    stars: [
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: 31, type: 'feature', message: 'style: 調整配色方案' },
+    ],
+    lines: [
+      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
+      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
+      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
+      { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
     ],
     labels: [
       {
@@ -178,20 +198,20 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch6-pr': {
-    // 間距 12：root 76, c1 64, c2 52, c3 40, f1 40, f2 28
+    // 同 ch5 + PR 標籤在 f2
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main' },
-      { id: 'c1', x: M, y: 64, type: 'main' },
-      { id: 'c2', x: M, y: 52, type: 'main' },
-      { id: 'c3', x: M, y: 40, type: 'main' },
-      { id: 'f1', x: F, y: 40, type: 'feature' },
-      { id: 'f2', x: F, y: 28, type: 'feature' }, // 準備合併
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
       { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
       { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
-      { id: 'l4', from: 'c2', to: 'f1', type: 'feature' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
       { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
     ],
     labels: [
@@ -207,21 +227,21 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch7-merge': {
-    // 間距統一為 9：root 76, c1 64, c2 52, c3 40, f1 40, f2 28, merge 19
+    // 同 ch6 + merge 節點 (y=22)
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main' },
-      { id: 'c1', x: M, y: 64, type: 'main' },
-      { id: 'c2', x: M, y: 52, type: 'main' },
-      { id: 'c3', x: M, y: 40, type: 'main' },
-      { id: 'f1', x: F, y: 40, type: 'feature' },
-      { id: 'f2', x: F, y: 28, type: 'feature' },
-      { id: 'merge', x: M, y: 19, type: 'merge' }, // 合併點（f2 28 → merge 19 = 9）
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
+      { id: 'merge', x: M, y: 22, type: 'merge', message: 'merge: feat/dark-mode' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
       { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
       { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
-      { id: 'l4', from: 'c2', to: 'f1', type: 'feature' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
       { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
       { id: 'l6', from: 'c3', to: 'merge', type: 'main' },
       { id: 'l7', from: 'f2', to: 'merge', type: 'merge' },
@@ -239,22 +259,22 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'next-steps': {
-    // 保持與 ch7-merge 相同座標，只新增 c4
+    // 同 ch7 + c4 (y=13)
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main' },
-      { id: 'c1', x: M, y: 64, type: 'main' },
-      { id: 'c2', x: M, y: 52, type: 'main' },
-      { id: 'c3', x: M, y: 40, type: 'main' },
-      { id: 'f1', x: F, y: 40, type: 'feature' },
-      { id: 'f2', x: F, y: 28, type: 'feature' },
-      { id: 'merge', x: M, y: 19, type: 'merge' },
-      { id: 'c4', x: M, y: 10, type: 'main' }, // 新增（merge 19 → c4 10 = 9）
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
+      { id: 'merge', x: M, y: 22, type: 'merge', message: 'merge: feat/dark-mode' },
+      { id: 'c4', x: M, y: 13, type: 'main', message: 'feat: 新增搜尋功能' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
       { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
       { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
-      { id: 'l4', from: 'c2', to: 'f1', type: 'feature' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
       { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
       { id: 'l6', from: 'c3', to: 'merge', type: 'main' },
       { id: 'l7', from: 'f2', to: 'merge', type: 'merge' },
@@ -277,10 +297,12 @@ export class ConstellationController {
   private starsContainer: SVGGElement | null = null;
   private linesContainer: SVGGElement | null = null;
   private labelsContainer: SVGGElement | null = null;
+  private messagesContainer: SVGGElement | null = null;
   private currentState: ConstellationState = { stars: [], lines: [], labels: [] };
   private starElements: Map<string, SVGCircleElement> = new Map();
   private lineElements: Map<string, SVGPathElement> = new Map();
   private labelElements: Map<string, SVGForeignObjectElement> = new Map();
+  private messageElements: Map<string, SVGForeignObjectElement> = new Map();
   private rippleElements: Map<string, SVGCircleElement[]> = new Map(); // hero 漣漪
   private viewBox = { width: 1920, height: 1080 };
   private reducedMotion = false;
@@ -307,6 +329,13 @@ export class ConstellationController {
       this.labelsContainer = document.createElementNS(SVG_NS, 'g');
       this.labelsContainer.setAttribute('id', 'constellation-labels');
       this.starsContainer.parentElement.appendChild(this.labelsContainer);
+    }
+
+    // 建立訊息容器
+    if (!this.messagesContainer && this.starsContainer?.parentElement) {
+      this.messagesContainer = document.createElementNS(SVG_NS, 'g');
+      this.messagesContainer.setAttribute('id', 'constellation-messages');
+      this.starsContainer.parentElement.appendChild(this.messagesContainer);
     }
 
     // 監聯視窗大小變化
@@ -434,6 +463,17 @@ export class ConstellationController {
         ripples.forEach((r) => r.remove());
         this.rippleElements.delete(star.id);
       }
+      // 同時移除訊息
+      const msgEl = this.messageElements.get(star.id);
+      if (msgEl) {
+        if (this.reducedMotion) {
+          msgEl.remove();
+        } else {
+          tl.to(msgEl, { opacity: 0, duration: 0.2 }, 0);
+          tl.add(() => msgEl.remove(), 0.2);
+        }
+        this.messageElements.delete(star.id);
+      }
     });
 
     // 3. 移動持續存在但位置改變的星點，並處理類型改變
@@ -459,6 +499,27 @@ export class ConstellationController {
             },
             0.2
           );
+        }
+
+        // 同步更新訊息位置
+        const msgEl = this.messageElements.get(targetStar.id);
+        if (msgEl) {
+          const newX = x + 20;
+          const newY = y - 12;
+          if (this.reducedMotion) {
+            msgEl.setAttribute('x', newX.toString());
+            msgEl.setAttribute('y', newY.toString());
+          } else {
+            tl.to(
+              msgEl,
+              {
+                attr: { x: newX, y: newY },
+                duration: 0.5,
+                ease: 'power2.inOut',
+              },
+              0.2
+            );
+          }
         }
       }
 
@@ -670,6 +731,25 @@ export class ConstellationController {
         }
 
         this.rippleElements.set(star.id, ripples);
+      }
+
+      // 訊息打字機效果
+      if (star.message) {
+        const msgEl = this.createMessageElement(star);
+        if (msgEl) {
+          this.messagesContainer?.appendChild(msgEl);
+          this.messageElements.set(star.id, msgEl);
+
+          const textEl = msgEl.querySelector('.constellation-message') as HTMLElement;
+          if (textEl) {
+            const starAppearEnd = appearTime + 0.3;
+            if (this.reducedMotion) {
+              textEl.textContent = star.message;
+            } else {
+              this.animateTypewriter(textEl, star.message, starAppearEnd, tl);
+            }
+          }
+        }
       }
     });
 
@@ -951,6 +1031,53 @@ export class ConstellationController {
   }
 
   /**
+   * 建立訊息 SVG foreignObject 元素
+   * 訊息顯示在星點右側，低調淡色樣式
+   */
+  private createMessageElement(star: Star): SVGForeignObjectElement | null {
+    if (!star.message) return null;
+
+    const { x, y } = this.relativeToAbsolute(star.x, star.y);
+    const fo = document.createElementNS(SVG_NS, 'foreignObject');
+
+    // 訊息顯示在星點右側
+    fo.setAttribute('x', (x + 20).toString());
+    fo.setAttribute('y', (y - 12).toString());
+    fo.setAttribute('width', '200');
+    fo.setAttribute('height', '30');
+    fo.setAttribute('data-star-id', star.id);
+    fo.classList.add('constellation-message-fo');
+
+    const span = document.createElement('span');
+    span.className = 'constellation-message';
+    span.setAttribute('data-text', star.message);
+    // 初始為空，打字機效果會逐字填入
+    span.textContent = '';
+
+    fo.appendChild(span);
+    return fo;
+  }
+
+  /**
+   * 打字機動畫：逐字顯示訊息
+   */
+  private animateTypewriter(
+    element: HTMLElement,
+    text: string,
+    startTime: number,
+    tl: gsap.core.Timeline
+  ): void {
+    const chars = text.split('');
+    const charDelay = 0.04; // 每字 40ms
+
+    chars.forEach((char, index) => {
+      tl.add(() => {
+        element.textContent += char;
+      }, startTime + index * charDelay);
+    });
+  }
+
+  /**
    * 建立星點 SVG 元素
    */
   private createStarElement(star: Star): SVGCircleElement {
@@ -1049,6 +1176,14 @@ export class ConstellationController {
         el.setAttribute('cx', x.toString());
         el.setAttribute('cy', y.toString());
       }
+
+      // 同步更新訊息位置
+      const msgEl = this.messageElements.get(star.id);
+      if (msgEl) {
+        const { x, y } = this.relativeToAbsolute(star.x, star.y);
+        msgEl.setAttribute('x', (x + 20).toString());
+        msgEl.setAttribute('y', (y - 12).toString());
+      }
     });
 
     // 重新計算所有連線（使用地鐵風格路徑）
@@ -1074,10 +1209,12 @@ export class ConstellationController {
     this.starElements.forEach((el) => el.remove());
     this.lineElements.forEach((el) => el.remove());
     this.labelElements.forEach((el) => el.remove());
+    this.messageElements.forEach((el) => el.remove());
     this.rippleElements.forEach((ripples) => ripples.forEach((r) => r.remove()));
     this.starElements.clear();
     this.lineElements.clear();
     this.labelElements.clear();
+    this.messageElements.clear();
     this.rippleElements.clear();
     this.currentState = { stars: [], lines: [], labels: [] };
   }
