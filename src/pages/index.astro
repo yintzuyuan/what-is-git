@@ -413,6 +413,155 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       番外篇 1：Protected Branch（保護分支）
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="bonus-protected">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">番外篇</span>
+      <h2 class="chapter__title reveal-title">
+        <i class="ph ph-lock chapter__icon"></i>
+        <span class="chapter__title-en">protected branch</span>
+        <span class="chapter__title-zh">保護分支</span>
+      </h2>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          <code>main</code> 是專案的<strong>穩定版本</strong>——<br />
+          不能直接修改，所有變更都必須透過 PR。
+        </p>
+
+        <!-- 說明卡片 -->
+        <div class="inline-callout reveal reveal-delay-3">
+          <i class="ph ph-shield-check inline-callout__icon"></i>
+          <p>
+            保護分支強制 Code Review，<br />
+            確保每一行程式碼都經過審查。
+          </p>
+        </div>
+
+        <!-- 流程說明 -->
+        <div class="divider reveal reveal-delay-4"></div>
+        <h3 class="reveal reveal-delay-5">保護機制</h3>
+        <ul class="tools-list reveal reveal-delay-6">
+          <li>
+            <strong>禁止直接 push</strong>
+            <span>— 防止未經審查的程式碼進入 main</span>
+          </li>
+          <li>
+            <strong>強制 PR 審查</strong>
+            <span>— 至少一位成員核准才能合併</span>
+          </li>
+          <li>
+            <strong>CI 檢查通過</strong>
+            <span>— 自動化測試成功才允許合併</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       番外篇 2：Code Review（審查）
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="bonus-review">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">番外篇</span>
+      <h2 class="chapter__title reveal-title">
+        <i class="ph ph-chat-circle-text chapter__icon"></i>
+        <span class="chapter__title-en">code review</span>
+        <span class="chapter__title-zh">程式碼審查</span>
+      </h2>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          PR 不是直接合併，而是先經過團隊審查。<br />
+          審查的目的是<strong>品質把關</strong>和<strong>知識共享</strong>。
+        </p>
+
+        <!-- 審查狀態說明 -->
+        <div class="divider reveal reveal-delay-3"></div>
+        <h3 class="reveal reveal-delay-4">審查流程</h3>
+        <ul class="tools-list reveal reveal-delay-5">
+          <li>
+            <strong>Pending</strong>
+            <span>— 等待審查中</span>
+          </li>
+          <li>
+            <strong>Changes Requested</strong>
+            <span>— 需要修改</span>
+          </li>
+          <li>
+            <strong>Approved</strong>
+            <span>— 通過，可以合併</span>
+          </li>
+        </ul>
+
+        <!-- CLI 區塊 -->
+        <div class="divider reveal reveal-delay-6"></div>
+        <p class="reveal reveal-delay-7">
+          收到 review 回饋後，修改並推送——<br />
+          PR 會<strong>自動更新</strong>，等待再次審查。
+        </p>
+        <div class="cli-block reveal reveal-delay-8">
+          <div class="cli-block__content">
+            <span class="cli-block__prompt">$</span>
+            <code class="cli-block__command">git commit -m "fix: 根據 review 修正"</code>
+          </div>
+          <button class="cli-block__copy" type="button" aria-label="複製指令">
+            <i class="ph ph-copy cli-block__copy-icon"></i>
+            <span>複製</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       番外篇 3：Merge Strategy（合併策略）
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="bonus-merge-strategy">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">番外篇</span>
+      <h2 class="chapter__title reveal-title">
+        <i class="ph ph-git-merge chapter__icon"></i>
+        <span class="chapter__title-en">merge strategy</span>
+        <span class="chapter__title-zh">合併策略</span>
+      </h2>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          同一個 PR，可以用<strong>不同方式</strong>合併——<br />
+          取決於你想要什麼樣的歷史紀錄。
+        </p>
+
+        <!-- 三種策略說明 -->
+        <div class="divider reveal reveal-delay-3"></div>
+        <h3 class="reveal reveal-delay-4">三種合併方式</h3>
+        <ul class="tools-list reveal reveal-delay-5">
+          <li>
+            <strong>Merge commit</strong>
+            <span>— 保留完整歷史，適合追蹤細節</span>
+          </li>
+          <li>
+            <strong>Squash and merge</strong>
+            <span>— 壓縮成單一 commit，歷史更簡潔</span>
+          </li>
+          <li>
+            <strong>Rebase and merge</strong>
+            <span>— 線性歷史，像從未分岔過</span>
+          </li>
+        </ul>
+
+        <!-- 提示 -->
+        <div class="inline-callout reveal reveal-delay-6">
+          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <p>
+            團隊通常會統一一種策略，<br />
+            確保歷史紀錄風格一致。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <script>
