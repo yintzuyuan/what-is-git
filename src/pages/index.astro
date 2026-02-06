@@ -12,7 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         什麼是 Git？
       </h1>
       <p class="chapter__subtitle reveal reveal-delay-1">
-        讓創意工作者「看懂」版本控制的心智模型
+        讓你不再需要「檔案_v3_final_真的final」
       </p>
       <div class="divider reveal reveal-delay-2"></div>
       <div class="chapter__body">
@@ -20,7 +20,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           Git 不是程式設計師的專屬工具。<br />
           它是<strong>創作流程</strong>的核心——無論你是平面設計師、字型設計師，還是藝術家。
         </p>
-        <p class="scroll-hint reveal reveal-delay-4">
+        <p class="reveal reveal-delay-4">
+          本教學會展示指令，讓你了解「背後發生什麼事」——<br />
+          但日常使用，<strong>圖形化工具</strong>一樣好用。
+        </p>
+        <p class="scroll-hint reveal reveal-delay-5">
           <span class="scroll-hint__text">向下捲動，開始探索</span>
           <i class="ph ph-caret-down scroll-hint__arrow" aria-hidden="true"></i>
         </p>
@@ -103,11 +107,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </button>
         </div>
 
-        <!-- Conventional Commits 說明 -->
-        <div class="inline-callout reveal reveal-delay-4">
-          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
-          <div>
-            <p>常見的提交前綴：</p>
+        <!-- Conventional Commits 說明（可折疊） -->
+        <details class="inline-callout inline-callout--collapsible reveal reveal-delay-4">
+          <summary>
+            <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+            <span>進階：約定式提交格式</span>
+          </summary>
+          <div class="inline-callout__content">
+            <p>團隊協作時，統一的提交格式讓歷史更易讀。<br />一開始只要寫清楚改了什麼就好：</p>
             <ul class="commit-types">
               <li><code>feat:</code> 新功能</li>
               <li><code>fix:</code> 修正錯誤</li>
@@ -115,7 +122,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <li><code>refactor:</code> 重構</li>
             </ul>
           </div>
-        </div>
+        </details>
 
         <!-- 範例 -->
         <div class="inline-callout reveal reveal-delay-5">
@@ -141,8 +148,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          把本地的 commit 上傳到遠端伺服器，<br />
-          就像同步到雲端硬碟——備份，也方便協作。
+          把本地的 commit 推送到雲端——<br />
+          就像把 Figma 存到雲端，讓你在別台電腦也能開。
         </p>
 
         <!-- CLI 區塊 -->
@@ -191,8 +198,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          建立分支，在獨立的空間嘗試新想法，<br />
-          不會影響主線的穩定版本。
+          建立分支，就像「另存新檔」試新配色——<br />
+          但 Git 記得它們的關係，隨時可以合併回來。
         </p>
 
         <!-- CLI 區塊 -->
@@ -231,8 +238,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          用 issue 記錄待辦事項、回報問題、<br />
-          或討論新功能。
+          <strong>Git</strong> 是版本控制工具，<strong>GitHub</strong> 是存放專案的平台。<br />
+          Issue 是 GitHub 提供的專案管理功能——<br />
+          就像 Notion 的待辦事項，但跟你的檔案直接連結。
         </p>
 
         <!-- 內嵌概念卡片（小螢幕顯示，大螢幕由星座標籤取代） -->
@@ -270,12 +278,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <h2 class="chapter__title reveal-title">
         <i class="ph ph-git-pull-request chapter__icon"></i>
         <span class="chapter__title-en">pull request</span>
-        <span class="chapter__title-zh">拉取請求</span>
+        <span class="chapter__title-zh">拉取請求（PR）</span>
       </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
-          分支完成後，發起 pull request 請求合併，<br />
-          讓自己或團隊成員審查變更。
+          分支完成後，發起 Pull Request（簡稱 PR）請求合併。<br />
+          「Pull」的意思是：你「請求」對方把你的分支「拉」進主線。
         </p>
 
         <!-- 內嵌概念卡片（小螢幕顯示，大螢幕由星座標籤取代） -->
@@ -367,7 +375,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </h2>
       <div class="chapter__body">
         <p class="reveal reveal-delay-1">
-          你已經建立了 Git 的<strong>心智模型</strong>。<br />
+          你已經掌握了 Git 的<strong>核心概念</strong>。<br />
           現在，試著用它吧。
         </p>
         <div class="divider reveal reveal-delay-2"></div>
@@ -390,6 +398,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <span>— 免費的進階圖形介面</span>
           </li>
         </ul>
+
+        <!-- 5 分鐘快速開始 -->
+        <div class="divider reveal reveal-delay-5"></div>
+        <div class="quick-start reveal reveal-delay-6">
+          <h3>5 分鐘開始</h3>
+          <ol class="quick-start__steps">
+            <li>下載 <a href="https://desktop.github.com/" target="_blank" rel="noopener">GitHub Desktop</a></li>
+            <li>建立一個資料夾，放入你的設計檔</li>
+            <li>在 GitHub Desktop 點「Add」→「Create New Repository」</li>
+            <li>恭喜！你已經在使用 Git 了 🎉</li>
+          </ol>
+        </div>
       </div>
     </div>
   </section>
