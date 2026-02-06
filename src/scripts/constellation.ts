@@ -75,6 +75,11 @@ const LAYOUT = {
   remoteOffset: 12, // 遠端副本的額外偏移 → x: 82
 };
 
+// 垂直座標計算
+const Y_START = 76; // 起始 y 座標（底部）
+const Y_SPACING = 7; // 節點間距
+const getY = (level: number): number => Y_START - level * Y_SPACING;
+
 // 統一的曲線半徑（viewBox 單位）
 const CURVE_RADIUS = 60;
 
@@ -95,24 +100,22 @@ export const chapterStates: Record<string, ConstellationState> = {
 
   // ═══════════════════════════════════════════════════════════════
   // 座標設計原則：
-  // - 統一間距 9，從 y:76 開始（留空間給後續節點）
+  // - 使用 getY(level) 計算垂直座標，level 0 = 起始點
   // - 「只進不退」：已出現的節點不消失
   // - 分支從 c3（最新主線節點）長出
   // ═══════════════════════════════════════════════════════════════
 
   'ch1-root': {
-    // root: y=76
-    stars: [{ id: 'root', x: M, y: 76, type: 'hero', message: 'init: 專案初始化' }],
+    stars: [{ id: 'root', x: M, y: getY(0), type: 'hero', message: 'init: 專案初始化' }],
     lines: [],
   },
 
   'ch2-trunk': {
-    // 間距 9：root 76, c1 67, c2 58, c3 49
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -123,17 +126,16 @@ export const chapterStates: Record<string, ConstellationState> = {
 
   'ch3-sync': {
     // 推送 main 到遠端（遠端副本首次出現，只有 main）
-    // 間距 9：root 76, c1 67, c2 58, c3 49
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
       // 遠端副本（右側）— 使用 remote 類型，較淡的藍灰色
-      { id: 'r-root', x: R, y: 76, type: 'remote' },
-      { id: 'r-c1', x: R, y: 67, type: 'remote' },
-      { id: 'r-c2', x: R, y: 58, type: 'remote' },
-      { id: 'r-c3', x: R, y: 49, type: 'remote' },
+      { id: 'r-root', x: R, y: getY(0), type: 'remote' },
+      { id: 'r-c1', x: R, y: getY(1), type: 'remote' },
+      { id: 'r-c2', x: R, y: getY(2), type: 'remote' },
+      { id: 'r-c3', x: R, y: getY(3), type: 'remote' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -148,14 +150,13 @@ export const chapterStates: Record<string, ConstellationState> = {
 
   'ch4-branch': {
     // 本地新增 feature 分支，遠端滑出（專注本地操作）
-    // 間距 9：root 76, c1 67, c2 58, c3 49, f1 40, f2 31
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
-      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
-      { id: 'f2', x: F, y: 31, type: 'feature', message: 'style: 調整配色方案' },
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'style: 調整配色方案' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -169,12 +170,12 @@ export const chapterStates: Record<string, ConstellationState> = {
   'ch5-issue': {
     // 保留分支，Issue 標籤錨定到 c3，遠端仍滑出（專注本地操作）
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
-      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
-      { id: 'f2', x: F, y: 31, type: 'feature', message: 'style: 調整配色方案' },
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'style: 調整配色方案' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -198,19 +199,19 @@ export const chapterStates: Record<string, ConstellationState> = {
   'ch6-pr': {
     // 同 ch5 + PR 標籤在 f2 + 遠端新增 feature 分支
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
-      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
-      { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'test: 新增單元測試' },
       // 遠端副本（main + feature 分支）
-      { id: 'r-root', x: R, y: 76, type: 'remote' },
-      { id: 'r-c1', x: R, y: 67, type: 'remote' },
-      { id: 'r-c2', x: R, y: 58, type: 'remote' },
-      { id: 'r-c3', x: R, y: 49, type: 'remote' },
-      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: 40, type: 'remote' },
-      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: 31, type: 'remote' },
+      { id: 'r-root', x: R, y: getY(0), type: 'remote' },
+      { id: 'r-c1', x: R, y: getY(1), type: 'remote' },
+      { id: 'r-c2', x: R, y: getY(2), type: 'remote' },
+      { id: 'r-c3', x: R, y: getY(3), type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: getY(4), type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: getY(5), type: 'remote' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -238,23 +239,22 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch7-merge': {
-    // 同 ch6 + merge 節點 (y=22)
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
-      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
-      { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
-      { id: 'merge', x: M, y: 22, type: 'merge', message: 'merge: feat/dark-mode' },
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'test: 新增單元測試' },
+      { id: 'merge', x: M, y: getY(6), type: 'merge', message: 'merge: feat/dark-mode' },
       // 遠端副本（main + feature + merge）
-      { id: 'r-root', x: R, y: 76, type: 'remote' },
-      { id: 'r-c1', x: R, y: 67, type: 'remote' },
-      { id: 'r-c2', x: R, y: 58, type: 'remote' },
-      { id: 'r-c3', x: R, y: 49, type: 'remote' },
-      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: 40, type: 'remote' },
-      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: 31, type: 'remote' },
-      { id: 'r-merge', x: R, y: 22, type: 'remote' },
+      { id: 'r-root', x: R, y: getY(0), type: 'remote' },
+      { id: 'r-c1', x: R, y: getY(1), type: 'remote' },
+      { id: 'r-c2', x: R, y: getY(2), type: 'remote' },
+      { id: 'r-c3', x: R, y: getY(3), type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: getY(4), type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: getY(5), type: 'remote' },
+      { id: 'r-merge', x: R, y: getY(6), type: 'remote' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -286,25 +286,24 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'next-steps': {
-    // 同 ch7 + c4 (y=13)
     stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
-      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
-      { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
-      { id: 'merge', x: M, y: 22, type: 'merge', message: 'merge: feat/dark-mode' },
-      { id: 'c4', x: M, y: 13, type: 'main', message: 'feat: 新增搜尋功能' },
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 深色模式切換' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'test: 新增單元測試' },
+      { id: 'merge', x: M, y: getY(6), type: 'merge', message: 'merge: feat/dark-mode' },
+      { id: 'c4', x: M, y: getY(7), type: 'main', message: 'feat: 新增搜尋功能' },
       // 遠端副本（完整歷史）
-      { id: 'r-root', x: R, y: 76, type: 'remote' },
-      { id: 'r-c1', x: R, y: 67, type: 'remote' },
-      { id: 'r-c2', x: R, y: 58, type: 'remote' },
-      { id: 'r-c3', x: R, y: 49, type: 'remote' },
-      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: 40, type: 'remote' },
-      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: 31, type: 'remote' },
-      { id: 'r-merge', x: R, y: 22, type: 'remote' },
-      { id: 'r-c4', x: R, y: 13, type: 'remote' },
+      { id: 'r-root', x: R, y: getY(0), type: 'remote' },
+      { id: 'r-c1', x: R, y: getY(1), type: 'remote' },
+      { id: 'r-c2', x: R, y: getY(2), type: 'remote' },
+      { id: 'r-c3', x: R, y: getY(3), type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: getY(4), type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: getY(5), type: 'remote' },
+      { id: 'r-merge', x: R, y: getY(6), type: 'remote' },
+      { id: 'r-c4', x: R, y: getY(7), type: 'remote' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
