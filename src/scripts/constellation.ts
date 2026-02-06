@@ -9,7 +9,7 @@ import { gsap } from 'gsap';
 // 型別定義
 // ═══════════════════════════════════════════════════════════════
 
-export type StarType = 'main' | 'feature' | 'merge' | 'conflict';
+export type StarType = 'main' | 'feature' | 'merge' | 'conflict' | 'hero';
 export type LineType = 'main' | 'feature' | 'merge';
 
 export interface Star {
@@ -41,6 +41,7 @@ const STAR_STYLES: Record<StarType, { fill: string; filter: string; radius: numb
   feature: { fill: '#c4b5fd', filter: 'url(#glow-purple)', radius: 7 },
   merge: { fill: '#fcd34d', filter: 'url(#glow-gold)', radius: 12 },
   conflict: { fill: '#fb7185', filter: 'url(#glow-rose)', radius: 8 },
+  hero: { fill: '#5eead4', filter: 'url(#glow-cyan)', radius: 10 }, // 第一章專用，較大
 };
 
 const LINE_STYLES: Record<LineType, { stroke: string; opacity: number }> = {
@@ -54,13 +55,13 @@ const LINE_STYLES: Record<LineType, { stroke: string; opacity: number }> = {
 // ═══════════════════════════════════════════════════════════════
 
 const LAYOUT = {
-  mainBranch: 70, // 主線 x 座標（畫面右側，留出空間給遠端）
-  featureOffset: 10, // feature 分支的水平偏移 → x: 80
-  remoteOffset: 18, // 遠端副本的額外偏移 → x: 88（留出 12% 邊距）
+  mainBranch: 70, // 主線 x 座標（70%，配合縮窄的內容區）
+  featureOffset: 5, // feature 分支的水平偏移 → x: 75
+  remoteOffset: 8, // 遠端副本的額外偏移 → x: 78（更緊湊）
 };
 
-// 地鐵風格連線的圓角半徑
-const METRO_CORNER_RADIUS = 20;
+// 統一的曲線半徑（viewBox 單位）
+const CURVE_RADIUS = 60;
 
 // ═══════════════════════════════════════════════════════════════
 // 章節星座狀態配置
@@ -78,16 +79,17 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch1-root': {
-    stars: [{ id: 'root', x: M, y: 70, type: 'main' }],
+    stars: [{ id: 'root', x: M, y: 70, type: 'hero' }], // hero 類型：有漣漪提示
     lines: [],
   },
 
   'ch2-trunk': {
+    // 間距 12：70, 58, 46, 34
     stars: [
       { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 55, type: 'main' },
-      { id: 'c2', x: M, y: 40, type: 'main' },
-      { id: 'c3', x: M, y: 25, type: 'main' },
+      { id: 'c1', x: M, y: 58, type: 'main' },
+      { id: 'c2', x: M, y: 46, type: 'main' },
+      { id: 'c3', x: M, y: 34, type: 'main' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -97,12 +99,13 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch3-branch': {
+    // 間距 12：root 70, c1 58, c2 46, f1 34, f2 22
     stars: [
       { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 55, type: 'main' },
-      { id: 'c2', x: M, y: 40, type: 'main' },
-      { id: 'f1', x: F, y: 30, type: 'feature' },
-      { id: 'f2', x: F, y: 20, type: 'feature' },
+      { id: 'c1', x: M, y: 58, type: 'main' },
+      { id: 'c2', x: M, y: 46, type: 'main' },
+      { id: 'f1', x: F, y: 34, type: 'feature' },
+      { id: 'f2', x: F, y: 22, type: 'feature' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -113,16 +116,17 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch4-sync': {
+    // 同 ch3 + 遠端副本
     stars: [
       { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 55, type: 'main' },
-      { id: 'c2', x: M, y: 40, type: 'main' },
-      { id: 'f1', x: F, y: 30, type: 'feature' },
-      { id: 'f2', x: F, y: 20, type: 'feature' },
+      { id: 'c1', x: M, y: 58, type: 'main' },
+      { id: 'c2', x: M, y: 46, type: 'main' },
+      { id: 'f1', x: F, y: 34, type: 'feature' },
+      { id: 'f2', x: F, y: 22, type: 'feature' },
       // 遠端副本（右側）
       { id: 'r-root', x: R, y: 70, type: 'main' },
-      { id: 'r-c1', x: R, y: 55, type: 'main' },
-      { id: 'r-c2', x: R, y: 40, type: 'main' },
+      { id: 'r-c1', x: R, y: 58, type: 'main' },
+      { id: 'r-c2', x: R, y: 46, type: 'main' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -136,36 +140,31 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch5-issue': {
-    // 與 ch4-sync 相同
+    // 只有主線：Issue 是「標記目的地」，還沒開始分支
+    // 間距 12：70, 58, 46, 34
     stars: [
       { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 55, type: 'main' },
-      { id: 'c2', x: M, y: 40, type: 'main' },
-      { id: 'f1', x: F, y: 30, type: 'feature' },
-      { id: 'f2', x: F, y: 20, type: 'feature' },
-      { id: 'r-root', x: R, y: 70, type: 'main' },
-      { id: 'r-c1', x: R, y: 55, type: 'main' },
-      { id: 'r-c2', x: R, y: 40, type: 'main' },
+      { id: 'c1', x: M, y: 58, type: 'main' },
+      { id: 'c2', x: M, y: 46, type: 'main' },
+      { id: 'c3', x: M, y: 34, type: 'main' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
       { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
-      { id: 'l3', from: 'c2', to: 'f1', type: 'feature' },
-      { id: 'l4', from: 'f1', to: 'f2', type: 'feature' },
-      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'main' },
-      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'main' },
+      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
     ],
   },
 
   'ch6-pr': {
+    // 間距 12：root 76, c1 64, c2 52, c3 40, f1 40, f2 28, f3 16
     stars: [
-      { id: 'root', x: M, y: 70, type: 'main' },
-      { id: 'c1', x: M, y: 55, type: 'main' },
-      { id: 'c2', x: M, y: 40, type: 'main' },
-      { id: 'c3', x: M, y: 25, type: 'main' },
-      { id: 'f1', x: F, y: 32, type: 'feature' },
-      { id: 'f2', x: F, y: 22, type: 'feature' },
-      { id: 'f3', x: F, y: 12, type: 'feature' }, // 準備合併
+      { id: 'root', x: M, y: 76, type: 'main' },
+      { id: 'c1', x: M, y: 64, type: 'main' },
+      { id: 'c2', x: M, y: 52, type: 'main' },
+      { id: 'c3', x: M, y: 40, type: 'main' },
+      { id: 'f1', x: F, y: 40, type: 'feature' },
+      { id: 'f2', x: F, y: 28, type: 'feature' },
+      { id: 'f3', x: F, y: 16, type: 'feature' }, // 準備合併
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -178,14 +177,15 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch7-merge': {
+    // 間距統一為 9：root 76, c1 64, c2 52, c3 40, f1 40, f2 28, merge 19
     stars: [
-      { id: 'root', x: M, y: 75, type: 'main' },
-      { id: 'c1', x: M, y: 62, type: 'main' },
-      { id: 'c2', x: M, y: 49, type: 'main' },
-      { id: 'c3', x: M, y: 36, type: 'main' },
-      { id: 'f1', x: F, y: 42, type: 'feature' },
-      { id: 'f2', x: F, y: 32, type: 'feature' },
-      { id: 'merge', x: M, y: 20, type: 'merge' }, // 合併點
+      { id: 'root', x: M, y: 76, type: 'main' },
+      { id: 'c1', x: M, y: 64, type: 'main' },
+      { id: 'c2', x: M, y: 52, type: 'main' },
+      { id: 'c3', x: M, y: 40, type: 'main' },
+      { id: 'f1', x: F, y: 40, type: 'feature' },
+      { id: 'f2', x: F, y: 28, type: 'feature' },
+      { id: 'merge', x: M, y: 19, type: 'merge' }, // 合併點（f2 28 → merge 19 = 9）
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -199,16 +199,16 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'next-steps': {
-    // 完整展示
+    // 保持與 ch7-merge 相同座標，只新增 c4
     stars: [
-      { id: 'root', x: M, y: 80, type: 'main' },
-      { id: 'c1', x: M, y: 68, type: 'main' },
-      { id: 'c2', x: M, y: 56, type: 'main' },
-      { id: 'c3', x: M, y: 44, type: 'main' },
-      { id: 'f1', x: F, y: 50, type: 'feature' },
-      { id: 'f2', x: F, y: 40, type: 'feature' },
-      { id: 'merge', x: M, y: 30, type: 'merge' },
-      { id: 'c4', x: M, y: 18, type: 'main' },
+      { id: 'root', x: M, y: 76, type: 'main' },
+      { id: 'c1', x: M, y: 64, type: 'main' },
+      { id: 'c2', x: M, y: 52, type: 'main' },
+      { id: 'c3', x: M, y: 40, type: 'main' },
+      { id: 'f1', x: F, y: 40, type: 'feature' },
+      { id: 'f2', x: F, y: 28, type: 'feature' },
+      { id: 'merge', x: M, y: 19, type: 'merge' },
+      { id: 'c4', x: M, y: 10, type: 'main' }, // 新增（merge 19 → c4 10 = 9）
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -239,6 +239,7 @@ export class ConstellationController {
   private currentState: ConstellationState = { stars: [], lines: [] };
   private starElements: Map<string, SVGCircleElement> = new Map();
   private lineElements: Map<string, SVGPathElement> = new Map();
+  private rippleElements: Map<string, SVGCircleElement[]> = new Map(); // hero 漣漪
   private viewBox = { width: 1920, height: 1080 };
   private reducedMotion = false;
 
@@ -377,14 +378,22 @@ export class ConstellationController {
         }
         this.starElements.delete(star.id);
       }
+      // 同時移除漣漪
+      const ripples = this.rippleElements.get(star.id);
+      if (ripples) {
+        ripples.forEach((r) => r.remove());
+        this.rippleElements.delete(star.id);
+      }
     });
 
-    // 3. 移動持續存在但位置改變的星點
+    // 3. 移動持續存在但位置改變的星點，並處理類型改變
     starsToKeep.forEach((targetStar) => {
       const currentStar = this.currentState.stars.find((s) => s.id === targetStar.id);
       const el = this.starElements.get(targetStar.id);
+      if (!currentStar || !el) return;
 
-      if (currentStar && el && (currentStar.x !== targetStar.x || currentStar.y !== targetStar.y)) {
+      // 處理位置改變
+      if (currentStar.x !== targetStar.x || currentStar.y !== targetStar.y) {
         const { x, y } = this.relativeToAbsolute(targetStar.x, targetStar.y);
 
         if (this.reducedMotion) {
@@ -400,6 +409,50 @@ export class ConstellationController {
             },
             0.2
           );
+        }
+      }
+
+      // 處理類型改變（hero ↔ 其他）
+      if (currentStar.type !== targetStar.type) {
+        const newStyle = STAR_STYLES[targetStar.type];
+        el.setAttribute('fill', newStyle.fill);
+        el.setAttribute('filter', newStyle.filter);
+        el.classList.remove(`star--${currentStar.type}`);
+        el.classList.add(`star--${targetStar.type}`);
+
+        // 從 hero 變成其他：移除漣漪
+        if (currentStar.type === 'hero') {
+          const ripples = this.rippleElements.get(targetStar.id);
+          if (ripples) {
+            ripples.forEach((r) => {
+              if (this.reducedMotion) {
+                r.remove();
+              } else {
+                tl.to(r, { opacity: 0, duration: 0.3 }, 0);
+                tl.add(() => r.remove(), 0.3);
+              }
+            });
+            this.rippleElements.delete(targetStar.id);
+          }
+        }
+
+        // 從其他變成 hero：創建漣漪（這種情況應該很少見）
+        if (targetStar.type === 'hero' && !this.reducedMotion) {
+          const { x, y } = this.relativeToAbsolute(targetStar.x, targetStar.y);
+          const targetRadius = targetStar.radius || newStyle.radius;
+          const ripples: SVGCircleElement[] = [];
+
+          for (let i = 0; i < 2; i++) {
+            const ripple = document.createElementNS(SVG_NS, 'circle');
+            ripple.setAttribute('cx', x.toString());
+            ripple.setAttribute('cy', y.toString());
+            ripple.setAttribute('r', targetRadius.toString());
+            ripple.classList.add('ripple');
+            ripple.style.animationDelay = `${i * 1}s`;
+            this.starsContainer?.insertBefore(ripple, el);
+            ripples.push(ripple);
+          }
+          this.rippleElements.set(targetStar.id, ripples);
         }
       }
     });
@@ -467,8 +520,18 @@ export class ConstellationController {
       regularLines.forEach((line) => {
         if (lineAnimParams.has(line.id)) return;
 
-        const fromAppearTime = starAppearTimes.get(line.from);
+        // 找出指向 from 星點的前置連線
+        const prerequisiteLines = regularLines.filter((l) => l.to === line.from);
+        let fromAppearTime = starAppearTimes.get(line.from);
         if (fromAppearTime === undefined) return;
+
+        // 如果有前置連線，等待它完成
+        prerequisiteLines.forEach((prereq) => {
+          const prereqParams = lineAnimParams.get(prereq.id);
+          if (prereqParams && prereqParams.endTime > fromAppearTime!) {
+            fromAppearTime = prereqParams.endTime;
+          }
+        });
 
         const startTime = fromAppearTime + 0.3;
         const el = this.createLineElement(line, targetState.stars);
@@ -536,6 +599,27 @@ export class ConstellationController {
           { attr: { r: targetRadius }, opacity: 1, duration: 0.3, ease: 'back.out(1.7)' },
           appearTime
         );
+      }
+
+      // hero 類型：創建漣漪效果
+      if (star.type === 'hero' && !this.reducedMotion) {
+        const { x, y } = this.relativeToAbsolute(star.x, star.y);
+        const ripples: SVGCircleElement[] = [];
+
+        // 創建 2 個錯開的漣漪
+        for (let i = 0; i < 2; i++) {
+          const ripple = document.createElementNS(SVG_NS, 'circle');
+          ripple.setAttribute('cx', x.toString());
+          ripple.setAttribute('cy', y.toString());
+          ripple.setAttribute('r', targetRadius.toString());
+          ripple.classList.add('ripple');
+          ripple.style.animationDelay = `${i * 1}s`; // 錯開 1 秒
+          // 插入在星點之前（下層）
+          this.starsContainer?.insertBefore(ripple, el);
+          ripples.push(ripple);
+        }
+
+        this.rippleElements.set(star.id, ripples);
       }
     });
 
@@ -735,8 +819,7 @@ export class ConstellationController {
       return `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
     }
 
-    // 斜向連接：使用二次貝茲曲線
-    // 根據方向決定控制點位置：
+    // 斜向連接：使用二次貝茲曲線，控制點在拐角處
     // - 向右（分岔）：先水平再垂直 → 控制點 (to.x, from.y)
     // - 向左（合併）：先垂直再水平 → 控制點 (from.x, to.y)
     const controlX = dx > 0 ? to.x : from.x;
@@ -824,8 +907,10 @@ export class ConstellationController {
   clear(): void {
     this.starElements.forEach((el) => el.remove());
     this.lineElements.forEach((el) => el.remove());
+    this.rippleElements.forEach((ripples) => ripples.forEach((r) => r.remove()));
     this.starElements.clear();
     this.lineElements.clear();
+    this.rippleElements.clear();
     this.currentState = { stars: [], lines: [] };
   }
 }

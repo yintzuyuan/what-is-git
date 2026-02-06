@@ -51,8 +51,8 @@
   --duration-slow: 600ms;
   --duration-slower: 1000ms;
 
-  /* 佈局 - 與主網站一致 */
-  --content-width: 42rem;
+  /* 佈局 - 縮窄以配合右側星座 */
+  --content-width: 36rem;
 }
 
 /* ── 1. 重設與基礎 ── */
@@ -112,7 +112,6 @@ h3 {
 
 p {
   margin-bottom: var(--space-md);
-  max-width: 60ch;
 }
 
 strong {
@@ -183,6 +182,7 @@ code {
 .chapter__body {
   color: var(--text-secondary);
   line-height: 1.8;
+  max-width: 28rem; /* 統一內容寬度，避免與星座重疊 */
 }
 
 .chapter__body p + p {
@@ -195,67 +195,75 @@ code {
   line-height: 1.75;
 }
 
-/* ── 4. CLI 鏡像 ── */
-.cli-mirror {
-  position: fixed;
-  bottom: var(--space-lg);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
+/* ── 4. CLI 區塊（內嵌於章節） ── */
+.cli-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
 
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background: var(--deep-black);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: var(--space-sm) var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.cli-block__content {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  color: var(--text-ghost);
-  background: rgba(26, 26, 26, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: 100px;
-  border: 1px solid var(--border);
-
-  opacity: 0;
-  transition:
-    opacity var(--duration-normal) var(--ease-out-expo),
-    transform var(--duration-normal) var(--ease-out-expo);
+  flex: 1;
+  min-width: 0;
 }
 
-.cli-mirror.is-visible {
-  opacity: 1;
-}
-
-.cli-mirror__prompt {
+.cli-block__prompt {
   color: var(--star-cyan);
   opacity: 0.7;
+  flex-shrink: 0;
 }
 
-.cli-mirror__command {
+.cli-block__command {
   color: var(--text-secondary);
-  transition: filter 60ms ease-out;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.cli-mirror__command.is-transitioning {
-  filter: blur(2px);
+.cli-block__copy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-ghost);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) ease-out;
+  flex-shrink: 0;
 }
 
-/* 桌面版：右側中央 */
-@media (min-width: 1024px) {
-  .cli-mirror {
-    bottom: auto;
-    top: 50%;
-    left: auto;
-    right: var(--space-lg);
-    transform: translateY(-50%);
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-xs);
-    padding: var(--space-sm) var(--space-md);
-    border-radius: 6px;
-    line-height: 1.4;
-  }
+.cli-block__copy:hover {
+  color: var(--text-secondary);
+  border-color: var(--text-ghost);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cli-block__copy.is-copied {
+  color: var(--star-cyan);
+  border-color: var(--star-cyan);
+}
+
+.cli-block__copy-icon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 /* ── 5. 進度指示 ── */
@@ -329,7 +337,84 @@ code {
   opacity: 1;
 }
 
-/* ── 6. 星座畫布 ── */
+/* ── 6. 內嵌卡片（概念說明） ── */
+.inline-card {
+  margin: var(--space-lg) 0;
+  background: rgba(22, 27, 34, 0.95);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* 卡片標題列 */
+.inline-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-sm);
+}
+
+.inline-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Issue 圖標：綠色 */
+.inline-card--issue .inline-card__icon {
+  color: #238636;
+}
+
+/* PR 圖標：紫色 */
+.inline-card--pr .inline-card__icon {
+  color: #8957e5;
+}
+
+.inline-card__title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.inline-card__body {
+  font-size: 0.75rem;
+  color: var(--text-ghost);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 內嵌 callout（引言） */
+.inline-callout {
+  margin: var(--space-lg) 0;
+  padding: var(--space-md);
+  background: rgba(94, 234, 212, 0.08);
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, var(--star-cyan), var(--star-purple)) 1;
+  border-radius: 0 4px 4px 0;
+}
+
+.inline-callout__icon {
+  display: block;
+  margin-bottom: var(--space-sm);
+  color: var(--star-cyan);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.inline-callout p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* ── 7. 星座畫布 ── */
 .constellation-canvas {
   position: fixed;
   inset: 0;
@@ -384,14 +469,57 @@ code {
   50% { opacity: 0.75; }
 }
 
+/* 第一章單點專用：光暈呼吸 + 漣漪提示點擊 */
+@keyframes pulse-hero {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 0 12px rgba(94, 234, 212, 0.5));
+  }
+  50% {
+    opacity: 0.9;
+    filter: brightness(1.15) drop-shadow(0 0 24px rgba(94, 234, 212, 0.7));
+  }
+}
+
+@keyframes ripple {
+  0% {
+    r: 8;
+    opacity: 0.6;
+  }
+  100% {
+    r: 40;
+    opacity: 0;
+  }
+}
+
+.star--hero {
+  fill: var(--star-cyan);
+  filter: url(#glow-cyan);
+  animation: pulse-hero 3s ease-in-out infinite;
+}
+
+.ripple {
+  fill: none;
+  stroke: var(--star-cyan);
+  stroke-width: 1.5;
+  animation: ripple 2s ease-out infinite;
+  pointer-events: none;
+}
+
 @keyframes pulse-feature {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
 }
 
 @keyframes pulse-merge {
-  0%, 100% { opacity: 1; filter: brightness(1); }
-  50% { opacity: 0.9; filter: brightness(1.3); }
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 0 8px rgba(252, 211, 77, 0.4));
+  }
+  50% {
+    opacity: 0.95;
+    filter: brightness(1.1) drop-shadow(0 0 14px rgba(252, 211, 77, 0.6));
+  }
 }
 
 @keyframes pulse-conflict {
@@ -422,7 +550,7 @@ code {
   opacity: 0.6;
 }
 
-/* ── 7. 動畫類別 ── */
+/* ── 8. 動畫類別 ── */
 .reveal {
   opacity: 0;
   transform: translateY(30px);
@@ -456,7 +584,7 @@ code {
   transform: translateY(0);
 }
 
-/* ── 8. 工具清單 ── */
+/* ── 9. 工具清單 ── */
 .tools-list {
   list-style: none;
   margin-top: var(--space-lg);
@@ -484,7 +612,7 @@ code {
   font-size: 0.9rem;
 }
 
-/* ── 9. 特殊效果 ── */
+/* ── 10. 特殊效果 ── */
 
 /* 光暈文字 */
 .glow-text {
@@ -525,7 +653,7 @@ code {
   font-weight: 500;
 }
 
-/* ── 10. 響應式 ── */
+/* ── 11. 響應式 ── */
 
 /* 超寬螢幕 */
 @media (min-width: 1440px) {
@@ -539,10 +667,6 @@ code {
 
   .progress {
     left: calc(var(--space-xl) * 1.5);
-  }
-
-  .cli-mirror {
-    right: calc(var(--space-xl) * 1.5);
   }
 
   /* 星座畫布在超寬螢幕上使用更大的視覺範圍 */
@@ -570,14 +694,17 @@ code {
     padding: var(--space-lg) var(--space-md);
   }
 
-  .cli-mirror {
-    bottom: var(--space-md);
-    font-size: 0.75rem;
-    padding: var(--space-xs) var(--space-sm);
+  .cli-block {
+    font-size: 0.8125rem;
+    padding: var(--space-sm);
+  }
+
+  .cli-block__copy {
+    padding: var(--space-xs);
   }
 }
 
-/* ── 11. 無障礙 ── */
+/* ── 12. 無障礙 ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
