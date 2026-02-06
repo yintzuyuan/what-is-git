@@ -68,7 +68,7 @@ html {
 
 body {
   font-family: var(--font-base);
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.75;
   color: var(--text-primary);
   background: var(--ink-black);
@@ -216,7 +216,7 @@ code {
   gap: var(--space-md);
 
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   background: var(--deep-black);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -388,14 +388,14 @@ code {
 }
 
 .inline-card__title {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-bright);
   margin: 0;
 }
 
 .inline-card__body {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--text-ghost);
   line-height: 1.5;
   margin: 0;
@@ -422,7 +422,7 @@ code {
 .inline-callout p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.6;
 }
 
