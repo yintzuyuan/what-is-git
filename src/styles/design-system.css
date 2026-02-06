@@ -201,6 +201,14 @@ code {
   gap: var(--space-sm);
 }
 
+.chapter__icon {
+  font-size: 1.5rem;
+  color: var(--star-cyan);
+  opacity: 0.7;
+  line-height: 1;
+  align-self: center;
+}
+
 /* 字典式雙語標題 */
 .chapter__title-en {
   font-family: var(--font-mono);
@@ -811,6 +819,14 @@ code {
 /* 漸層文字 */
 .gradient-text {
   background: linear-gradient(135deg, var(--star-cyan), var(--star-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 序章標題：更明顯的紫色漸層 */
+.gradient-text--hero {
+  background: linear-gradient(90deg, var(--star-cyan) 0%, var(--star-purple) 35%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
