@@ -413,6 +413,170 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       番外篇 1：Protected Branch（保護分支）
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="bonus-protected">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">番外篇 · 當你加入團隊</span>
+      <h2 class="chapter__title reveal-title">
+        <i class="ph ph-lock chapter__icon"></i>
+        <span class="chapter__title-en">protected branch</span>
+        <span class="chapter__title-zh">保護分支</span>
+      </h2>
+      <div class="chapter__body">
+        <!-- 過渡引言 -->
+        <p class="reveal reveal-delay-1">
+          前面學的是個人工作流程。<br />
+          當你加入團隊，會遇到一些新規則——<br />
+          確保大家的改動不會互相覆蓋。
+        </p>
+
+        <div class="divider reveal reveal-delay-2"></div>
+
+        <p class="reveal reveal-delay-3">
+          <code>main</code> 是專案的<strong>穩定版本</strong>——<br />
+          不能直接修改，所有變更都必須透過 PR。
+        </p>
+
+        <!-- 設計師類比 -->
+        <div class="inline-callout reveal reveal-delay-4">
+          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <p>
+            想像設計系統的 Master Component——<br />
+            團隊成員不能隨意更改，需要經過審核。
+          </p>
+        </div>
+
+        <!-- 流程說明 -->
+        <div class="divider reveal reveal-delay-5"></div>
+        <h3 class="reveal reveal-delay-6">保護機制</h3>
+        <ul class="tools-list reveal reveal-delay-7">
+          <li>
+            <strong>禁止直接 push</strong>
+            <span>— 防止未經審查的內容進入 main</span>
+          </li>
+          <li>
+            <strong>強制 PR 審查</strong>
+            <span>— 至少一位成員核准才能合併</span>
+          </li>
+          <li>
+            <strong>自動檢查通過</strong>
+            <span>— 確認沒有明顯錯誤才允許合併</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       番外篇 2：Code Review（變更審查）
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="bonus-review">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">番外篇 · 當你加入團隊</span>
+      <h2 class="chapter__title reveal-title">
+        <i class="ph ph-chat-circle-text chapter__icon"></i>
+        <span class="chapter__title-en">review</span>
+        <span class="chapter__title-zh">變更審查</span>
+      </h2>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          PR 不是直接合併，而是先經過團隊審查。<br />
+          審查的目的是<strong>品質把關</strong>和<strong>知識共享</strong>。
+        </p>
+
+        <!-- 設計師類比 -->
+        <div class="inline-callout reveal reveal-delay-3">
+          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <p>
+            像設計 Critique——同事看你的作品給回饋，<br />
+            確保設計符合規範，也讓團隊了解你在做什麼。
+          </p>
+        </div>
+
+        <!-- 審查狀態說明 -->
+        <div class="divider reveal reveal-delay-4"></div>
+        <h3 class="reveal reveal-delay-5">審查狀態</h3>
+        <ul class="tools-list reveal reveal-delay-6">
+          <li>
+            <strong>Pending</strong>
+            <span>— 等待中：等待審查</span>
+          </li>
+          <li>
+            <strong>Changes Requested</strong>
+            <span>— 請修改：需要調整後重新送審</span>
+          </li>
+          <li>
+            <strong>Approved</strong>
+            <span>— 通過：可以合併了</span>
+          </li>
+        </ul>
+
+        <!-- CLI 區塊 -->
+        <div class="divider reveal reveal-delay-7"></div>
+        <p class="reveal reveal-delay-8">
+          收到回饋後，修改並推送——<br />
+          PR 會<strong>自動更新</strong>，等待再次審查。
+        </p>
+        <div class="cli-block reveal reveal-delay-9">
+          <div class="cli-block__content">
+            <span class="cli-block__prompt">$</span>
+            <code class="cli-block__command">git commit -m "fix: 根據回饋修正"</code>
+          </div>
+          <button class="cli-block__copy" type="button" aria-label="複製指令">
+            <i class="ph ph-copy cli-block__copy-icon"></i>
+            <span>複製</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       番外篇 3：Merge Strategy（合併策略）
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="bonus-merge-strategy">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">番外篇 · 當你加入團隊</span>
+      <h2 class="chapter__title reveal-title">
+        <i class="ph ph-git-merge chapter__icon"></i>
+        <span class="chapter__title-en">merge strategy</span>
+        <span class="chapter__title-zh">合併策略</span>
+      </h2>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          同一個 PR，可以用<strong>不同方式</strong>合併——<br />
+          取決於你想要什麼樣的歷史紀錄。
+        </p>
+
+        <!-- 兩種策略說明（簡化版）-->
+        <div class="divider reveal reveal-delay-3"></div>
+        <h3 class="reveal reveal-delay-4">兩種常見方式</h3>
+        <ul class="tools-list reveal reveal-delay-5">
+          <li>
+            <strong>Merge commit</strong>
+            <span>— 合併提交：保留完整歷史，像保留每個設計迭代的圖層</span>
+          </li>
+          <li>
+            <strong>Squash and merge</strong>
+            <span>— 壓縮合併：壓縮成一個 commit，像把圖層群組合併</span>
+          </li>
+        </ul>
+
+        <!-- 提示 -->
+        <div class="inline-callout reveal reveal-delay-6">
+          <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <p>
+            團隊通常會統一一種策略，<br />
+            確保歷史紀錄風格一致。<br />
+            加入團隊後，問問他們用哪種就好。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <script>

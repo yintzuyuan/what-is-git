@@ -423,6 +423,15 @@ code {
   opacity: 1;
 }
 
+/* 番外篇分隔線 */
+.progress__divider {
+  width: 4px;
+  height: 1px;
+  background: var(--text-ghost);
+  opacity: 0.3;
+  margin: var(--space-xs) 2px;
+}
+
 /* ── 6. 內嵌卡片（概念說明） ── */
 .inline-card {
   margin: var(--space-lg) 0;

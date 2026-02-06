@@ -325,6 +325,142 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'r-l8', from: 'r-merge', to: 'r-c4', type: 'remote' },
     ],
   },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 番外篇：團隊協作流程
+  // ═══════════════════════════════════════════════════════════════
+
+  'bonus-protected': {
+    // Protected Branch：main 分支受保護，feature 分支指向但無法直接合併
+    stars: [
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 新功能開發' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'test: 新增測試' },
+      // 遠端副本
+      { id: 'r-root', x: R, y: getY(0), type: 'remote' },
+      { id: 'r-c1', x: R, y: getY(1), type: 'remote' },
+      { id: 'r-c2', x: R, y: getY(2), type: 'remote' },
+      { id: 'r-c3', x: R, y: getY(3), type: 'remote' },
+    ],
+    lines: [
+      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
+      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
+      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
+      { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
+      // 遠端連線
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'remote' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'remote' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'remote' },
+    ],
+    labels: [
+      {
+        id: 'protected-label',
+        anchorStar: 'c3',
+        position: 'left',
+        type: 'issue',
+        title: 'protected',
+        body: '禁止直接 push',
+      },
+    ],
+  },
+
+  'bonus-review': {
+    // Code Review：PR 等待審查，收到回饋後修改
+    stars: [
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 新功能開發' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'test: 新增測試' },
+      { id: 'f3', x: F, y: getY(6), type: 'feature', message: 'fix: 根據 review 修正' },
+      // 遠端副本（含 feature 分支）
+      { id: 'r-root', x: R, y: getY(0), type: 'remote' },
+      { id: 'r-c1', x: R, y: getY(1), type: 'remote' },
+      { id: 'r-c2', x: R, y: getY(2), type: 'remote' },
+      { id: 'r-c3', x: R, y: getY(3), type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: getY(4), type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: getY(5), type: 'remote' },
+      { id: 'r-f3', x: R + LAYOUT.featureOffset, y: getY(6), type: 'remote' },
+    ],
+    lines: [
+      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
+      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
+      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
+      { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
+      { id: 'l6', from: 'f2', to: 'f3', type: 'feature' },
+      // 遠端連線
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'remote' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'remote' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'remote' },
+      { id: 'r-l4', from: 'r-c3', to: 'r-f1', type: 'remote' },
+      { id: 'r-l5', from: 'r-f1', to: 'r-f2', type: 'remote' },
+      { id: 'r-l6', from: 'r-f2', to: 'r-f3', type: 'remote' },
+    ],
+    labels: [
+      {
+        id: 'review-label',
+        anchorStar: 'f3',
+        position: 'left',
+        type: 'pr',
+        title: '通過',
+        body: '審查通過，可以合併',
+      },
+    ],
+  },
+
+  'bonus-merge-strategy': {
+    // Merge Strategy：展示合併後的結果
+    stars: [
+      { id: 'root', x: M, y: getY(0), type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: getY(1), type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: getY(2), type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: getY(3), type: 'main', message: 'docs: 更新 README' },
+      { id: 'f1', x: F, y: getY(4), type: 'feature', message: 'feat: 新功能開發' },
+      { id: 'f2', x: F, y: getY(5), type: 'feature', message: 'test: 新增測試' },
+      { id: 'merge', x: M, y: getY(6), type: 'merge', message: 'merge: 合併功能分支' },
+      // 遠端副本（完整歷史）
+      { id: 'r-root', x: R, y: getY(0), type: 'remote' },
+      { id: 'r-c1', x: R, y: getY(1), type: 'remote' },
+      { id: 'r-c2', x: R, y: getY(2), type: 'remote' },
+      { id: 'r-c3', x: R, y: getY(3), type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: getY(4), type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: getY(5), type: 'remote' },
+      { id: 'r-merge', x: R, y: getY(6), type: 'remote' },
+    ],
+    lines: [
+      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
+      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
+      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
+      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
+      { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
+      { id: 'l6', from: 'c3', to: 'merge', type: 'main' },
+      { id: 'l7', from: 'f2', to: 'merge', type: 'merge' },
+      // 遠端連線
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'remote' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'remote' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'remote' },
+      { id: 'r-l4', from: 'r-c3', to: 'r-f1', type: 'remote' },
+      { id: 'r-l5', from: 'r-f1', to: 'r-f2', type: 'remote' },
+      { id: 'r-l6', from: 'r-c3', to: 'r-merge', type: 'remote' },
+      { id: 'r-l7', from: 'r-f2', to: 'r-merge', type: 'remote' },
+    ],
+    labels: [
+      {
+        id: 'strategy-label',
+        anchorStar: 'merge',
+        position: 'left',
+        type: 'merged',
+        title: 'Merge commit',
+        body: '保留完整分支歷史',
+      },
+    ],
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════
