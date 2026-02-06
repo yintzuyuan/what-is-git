@@ -112,11 +112,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════
-       第三章：維度的偏轉 (Branching)
+       第三章：空間的共鳴 (Sync)
        ═══════════════════════════════════════════════════════════════ -->
-  <section class="chapter" id="ch3-branch">
+  <section class="chapter" id="ch3-sync">
     <div class="chapter__inner">
       <span class="chapter__eyebrow reveal">第三章</span>
+      <h2 class="chapter__title reveal-title">
+        <span class="chapter__title-en">push</span>
+        <span class="chapter__title-zh">推送</span>
+      </h2>
+      <div class="chapter__body">
+        <p class="reveal reveal-delay-2">
+          把本地的 commit 上傳到遠端伺服器，<br />
+          就像同步到雲端硬碟——備份，也方便協作。
+        </p>
+
+        <!-- CLI 區塊 -->
+        <div class="cli-block reveal reveal-delay-3">
+          <div class="cli-block__content">
+            <span class="cli-block__prompt">$</span>
+            <code class="cli-block__command">git push origin main</code>
+          </div>
+          <button class="cli-block__copy" type="button" aria-label="複製指令">
+            <i class="ph ph-copy cli-block__copy-icon"></i>
+            <span>複製</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       第四章：維度的偏轉 (Branching)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="chapter" id="ch4-branch">
+    <div class="chapter__inner">
+      <span class="chapter__eyebrow reveal">第四章</span>
       <h2 class="chapter__title reveal-title">
         <span class="chapter__title-en">branch</span>
         <span class="chapter__title-zh">分支</span>
@@ -145,37 +176,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <p>
             範例：<code>git checkout -b feat/dark-mode</code>
           </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       第四章：空間的共鳴 (Sync)
-       ═══════════════════════════════════════════════════════════════ -->
-  <section class="chapter" id="ch4-sync">
-    <div class="chapter__inner">
-      <span class="chapter__eyebrow reveal">第四章</span>
-      <h2 class="chapter__title reveal-title">
-        <span class="chapter__title-en">push</span>
-        <span class="chapter__title-zh">推送</span>
-      </h2>
-      <div class="chapter__body">
-        <p class="reveal reveal-delay-2">
-          把本地的 commit 上傳到遠端伺服器，<br />
-          就像同步到雲端硬碟——備份，也方便協作。
-        </p>
-
-        <!-- CLI 區塊 -->
-        <div class="cli-block reveal reveal-delay-3">
-          <div class="cli-block__content">
-            <span class="cli-block__prompt">$</span>
-            <code class="cli-block__command">git push origin main</code>
-          </div>
-          <button class="cli-block__copy" type="button" aria-label="複製指令">
-            <i class="ph ph-copy cli-block__copy-icon"></i>
-            <span>複製</span>
-          </button>
         </div>
       </div>
     </div>

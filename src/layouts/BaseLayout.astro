@@ -80,6 +80,14 @@ const {
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <!-- 遠端副本：較淡的藍灰色發光 -->
+          <filter id="glow-slate" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
         <!-- 背景星點（靜態裝飾） -->
@@ -121,8 +129,8 @@ const {
       <button class="progress__dot is-active" data-target="intro" data-color="cyan" data-title="序章" aria-label="序章"></button>
       <button class="progress__dot" data-target="ch1-root" data-color="cyan" data-title="紮根" aria-label="第一章：紮根"></button>
       <button class="progress__dot" data-target="ch2-trunk" data-color="cyan" data-title="累積" aria-label="第二章：累積"></button>
-      <button class="progress__dot" data-target="ch3-branch" data-color="purple" data-title="分支" aria-label="第三章：分支"></button>
-      <button class="progress__dot" data-target="ch4-sync" data-color="cyan" data-title="同步" aria-label="第四章：同步"></button>
+      <button class="progress__dot" data-target="ch3-sync" data-color="cyan" data-title="同步" aria-label="第三章：同步"></button>
+      <button class="progress__dot" data-target="ch4-branch" data-color="purple" data-title="分支" aria-label="第四章：分支"></button>
       <button class="progress__dot" data-target="ch5-issue" data-color="cyan" data-title="目的" aria-label="第五章：目的"></button>
       <button class="progress__dot" data-target="ch6-pr" data-color="purple" data-title="回望" aria-label="第六章：回望"></button>
       <button class="progress__dot" data-target="ch7-merge" data-color="gold" data-title="合併" aria-label="第七章：合併"></button>

@@ -16,6 +16,7 @@
   --star-purple: #c4b5fd;
   --star-gold: #fcd34d;
   --star-rose: #fb7185;
+  --star-slate: #94a3b8; /* 遠端副本：較淡的藍灰色 */
 
   /* 文字層次 - 基於主網站深色模式 */
   --text-bright: #ffffff;
@@ -28,6 +29,7 @@
   --glow-purple: 0 0 20px rgba(196, 181, 253, 0.35);
   --glow-gold: 0 0 20px rgba(252, 211, 77, 0.35);
   --glow-rose: 0 0 20px rgba(251, 113, 133, 0.4);
+  --glow-slate: 0 0 12px rgba(148, 163, 184, 0.2); /* 遠端副本：較淡的發光 */
 
   /* 間距系統 - 與主網站完全一致 */
   --space-xs: 0.25rem;
@@ -497,9 +499,20 @@ code {
   animation: pulse-conflict 1s ease-in-out infinite;
 }
 
+.star--remote {
+  fill: var(--star-slate);
+  filter: url(#glow-slate);
+  animation: pulse-remote 4s ease-in-out infinite;
+}
+
 @keyframes pulse-main {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.75; }
+}
+
+@keyframes pulse-remote {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.4; }
 }
 
 /* 第一章單點專用：光暈呼吸 + 漣漪提示點擊 */
@@ -583,6 +596,11 @@ code {
   opacity: 0.6;
 }
 
+.constellation-line--remote {
+  stroke: var(--star-slate);
+  opacity: 0.25;
+}
+
 /* 星座標籤（foreignObject 容器） */
 .constellation-label-fo {
   overflow: visible;
@@ -628,12 +646,21 @@ code {
 }
 
 .constellation-message {
+  display: block;
+  height: 20px;  /* 與 foreignObject 高度一致 */
   font-family: var(--font-mono);
   font-size: 0.875rem;  /* 14px */
-  color: var(--text-ghost);
+  line-height: 20px;  /* 實現垂直居中 */
+  color: var(--text-secondary);  /* 使用較亮的灰色 #9ca3af */
   white-space: nowrap;
-  opacity: 0.5;
   letter-spacing: 0.02em;
+  margin: 0;
+  padding: 0;
+  /* 文字陰影創造分離效果，避免與連線重疊 */
+  text-shadow:
+    0 0 4px var(--ink-black),
+    0 0 8px var(--ink-black),
+    0 0 12px var(--ink-black);
 }
 
 /* 小螢幕：隱藏訊息 */

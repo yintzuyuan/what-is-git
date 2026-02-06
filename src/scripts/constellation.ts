@@ -9,8 +9,8 @@ import { gsap } from 'gsap';
 // 型別定義
 // ═══════════════════════════════════════════════════════════════
 
-export type StarType = 'main' | 'feature' | 'merge' | 'conflict' | 'hero';
-export type LineType = 'main' | 'feature' | 'merge';
+export type StarType = 'main' | 'feature' | 'merge' | 'conflict' | 'hero' | 'remote';
+export type LineType = 'main' | 'feature' | 'merge' | 'remote';
 export type LabelType = 'issue' | 'pr' | 'merged';
 export type LabelPosition = 'left' | 'right' | 'top' | 'bottom';
 
@@ -55,12 +55,14 @@ const STAR_STYLES: Record<StarType, { fill: string; filter: string; radius: numb
   merge: { fill: '#fcd34d', filter: 'url(#glow-gold)', radius: 12 },
   conflict: { fill: '#fb7185', filter: 'url(#glow-rose)', radius: 8 },
   hero: { fill: '#5eead4', filter: 'url(#glow-cyan)', radius: 10 }, // 第一章專用，較大
+  remote: { fill: '#94a3b8', filter: 'url(#glow-slate)', radius: 6 }, // 遠端副本：較淡的藍灰色，較小
 };
 
 const LINE_STYLES: Record<LineType, { stroke: string; opacity: number }> = {
   main: { stroke: '#5eead4', opacity: 0.5 },
   feature: { stroke: '#c4b5fd', opacity: 0.4 },
   merge: { stroke: '#fcd34d', opacity: 0.6 },
+  remote: { stroke: '#94a3b8', opacity: 0.25 }, // 遠端副本：較淡
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -70,7 +72,7 @@ const LINE_STYLES: Record<LineType, { stroke: string; opacity: number }> = {
 const LAYOUT = {
   mainBranch: 70, // 主線 x 座標（70%，配合縮窄的內容區）
   featureOffset: 5, // feature 分支的水平偏移 → x: 75
-  remoteOffset: 8, // 遠端副本的額外偏移 → x: 78（更緊湊）
+  remoteOffset: 12, // 遠端副本的額外偏移 → x: 82
 };
 
 // 統一的曲線半徑（viewBox 單位）
@@ -119,8 +121,33 @@ export const chapterStates: Record<string, ConstellationState> = {
     ],
   },
 
-  'ch3-branch': {
-    // 保留 c3，分支從 c3 長出
+  'ch3-sync': {
+    // 推送 main 到遠端（遠端副本首次出現，只有 main）
+    // 間距 9：root 76, c1 67, c2 58, c3 49
+    stars: [
+      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
+      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
+      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
+      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
+      // 遠端副本（右側）— 使用 remote 類型，較淡的藍灰色
+      { id: 'r-root', x: R, y: 76, type: 'remote' },
+      { id: 'r-c1', x: R, y: 67, type: 'remote' },
+      { id: 'r-c2', x: R, y: 58, type: 'remote' },
+      { id: 'r-c3', x: R, y: 49, type: 'remote' },
+    ],
+    lines: [
+      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
+      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
+      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
+      // 遠端連線
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'remote' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'remote' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'remote' },
+    ],
+  },
+
+  'ch4-branch': {
+    // 本地新增 feature 分支，遠端滑出（專注本地操作）
     // 間距 9：root 76, c1 67, c2 58, c3 49, f1 40, f2 31
     stars: [
       { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
@@ -139,37 +166,8 @@ export const chapterStates: Record<string, ConstellationState> = {
     ],
   },
 
-  'ch4-sync': {
-    // 同 ch3 + 遠端副本（只複製主線）
-    stars: [
-      { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
-      { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
-      { id: 'c2', x: M, y: 58, type: 'main', message: 'fix: 修正導覽連結' },
-      { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
-      { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
-      { id: 'f2', x: F, y: 31, type: 'feature', message: 'style: 調整配色方案' },
-      // 遠端副本（右側）— 不顯示訊息避免視覺重複
-      { id: 'r-root', x: R, y: 76, type: 'main' },
-      { id: 'r-c1', x: R, y: 67, type: 'main' },
-      { id: 'r-c2', x: R, y: 58, type: 'main' },
-      { id: 'r-c3', x: R, y: 49, type: 'main' },
-    ],
-    lines: [
-      { id: 'l1', from: 'root', to: 'c1', type: 'main' },
-      { id: 'l2', from: 'c1', to: 'c2', type: 'main' },
-      { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
-      { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
-      { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
-      // 遠端連線
-      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'main' },
-      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'main' },
-      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'main' },
-    ],
-  },
-
   'ch5-issue': {
-    // 保留分支（只進不退），Issue 標籤錨定到 c3
-    // Issue 是「規劃下一步」，不是「倒退到分支前」
+    // 保留分支，Issue 標籤錨定到 c3，遠端仍滑出（專注本地操作）
     stars: [
       { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
       { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
@@ -198,7 +196,7 @@ export const chapterStates: Record<string, ConstellationState> = {
   },
 
   'ch6-pr': {
-    // 同 ch5 + PR 標籤在 f2
+    // 同 ch5 + PR 標籤在 f2 + 遠端新增 feature 分支
     stars: [
       { id: 'root', x: M, y: 76, type: 'main', message: 'init: 專案初始化' },
       { id: 'c1', x: M, y: 67, type: 'main', message: 'feat: 建立首頁' },
@@ -206,6 +204,13 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'c3', x: M, y: 49, type: 'main', message: 'docs: 更新 README' },
       { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
       { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
+      // 遠端副本（main + feature 分支）
+      { id: 'r-root', x: R, y: 76, type: 'remote' },
+      { id: 'r-c1', x: R, y: 67, type: 'remote' },
+      { id: 'r-c2', x: R, y: 58, type: 'remote' },
+      { id: 'r-c3', x: R, y: 49, type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: 40, type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: 31, type: 'remote' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -213,6 +218,12 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'l3', from: 'c2', to: 'c3', type: 'main' },
       { id: 'l4', from: 'c3', to: 'f1', type: 'feature' },
       { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
+      // 遠端連線（main + feature）
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'remote' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'remote' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'remote' },
+      { id: 'r-l4', from: 'r-c3', to: 'r-f1', type: 'remote' },
+      { id: 'r-l5', from: 'r-f1', to: 'r-f2', type: 'remote' },
     ],
     labels: [
       {
@@ -236,6 +247,14 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'f1', x: F, y: 40, type: 'feature', message: 'feat: 深色模式切換' },
       { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
       { id: 'merge', x: M, y: 22, type: 'merge', message: 'merge: feat/dark-mode' },
+      // 遠端副本（main + feature + merge）
+      { id: 'r-root', x: R, y: 76, type: 'remote' },
+      { id: 'r-c1', x: R, y: 67, type: 'remote' },
+      { id: 'r-c2', x: R, y: 58, type: 'remote' },
+      { id: 'r-c3', x: R, y: 49, type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: 40, type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: 31, type: 'remote' },
+      { id: 'r-merge', x: R, y: 22, type: 'remote' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -245,6 +264,14 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'l5', from: 'f1', to: 'f2', type: 'feature' },
       { id: 'l6', from: 'c3', to: 'merge', type: 'main' },
       { id: 'l7', from: 'f2', to: 'merge', type: 'merge' },
+      // 遠端連線
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'remote' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'remote' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'remote' },
+      { id: 'r-l4', from: 'r-c3', to: 'r-f1', type: 'remote' },
+      { id: 'r-l5', from: 'r-f1', to: 'r-f2', type: 'remote' },
+      { id: 'r-l6', from: 'r-c3', to: 'r-merge', type: 'remote' },
+      { id: 'r-l7', from: 'r-f2', to: 'r-merge', type: 'remote' },
     ],
     labels: [
       {
@@ -269,6 +296,15 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'f2', x: F, y: 31, type: 'feature', message: 'test: 新增單元測試' },
       { id: 'merge', x: M, y: 22, type: 'merge', message: 'merge: feat/dark-mode' },
       { id: 'c4', x: M, y: 13, type: 'main', message: 'feat: 新增搜尋功能' },
+      // 遠端副本（完整歷史）
+      { id: 'r-root', x: R, y: 76, type: 'remote' },
+      { id: 'r-c1', x: R, y: 67, type: 'remote' },
+      { id: 'r-c2', x: R, y: 58, type: 'remote' },
+      { id: 'r-c3', x: R, y: 49, type: 'remote' },
+      { id: 'r-f1', x: R + LAYOUT.featureOffset, y: 40, type: 'remote' },
+      { id: 'r-f2', x: R + LAYOUT.featureOffset, y: 31, type: 'remote' },
+      { id: 'r-merge', x: R, y: 22, type: 'remote' },
+      { id: 'r-c4', x: R, y: 13, type: 'remote' },
     ],
     lines: [
       { id: 'l1', from: 'root', to: 'c1', type: 'main' },
@@ -279,6 +315,15 @@ export const chapterStates: Record<string, ConstellationState> = {
       { id: 'l6', from: 'c3', to: 'merge', type: 'main' },
       { id: 'l7', from: 'f2', to: 'merge', type: 'merge' },
       { id: 'l8', from: 'merge', to: 'c4', type: 'main' },
+      // 遠端連線
+      { id: 'r-l1', from: 'r-root', to: 'r-c1', type: 'remote' },
+      { id: 'r-l2', from: 'r-c1', to: 'r-c2', type: 'remote' },
+      { id: 'r-l3', from: 'r-c2', to: 'r-c3', type: 'remote' },
+      { id: 'r-l4', from: 'r-c3', to: 'r-f1', type: 'remote' },
+      { id: 'r-l5', from: 'r-f1', to: 'r-f2', type: 'remote' },
+      { id: 'r-l6', from: 'r-c3', to: 'r-merge', type: 'remote' },
+      { id: 'r-l7', from: 'r-f2', to: 'r-merge', type: 'remote' },
+      { id: 'r-l8', from: 'r-merge', to: 'r-c4', type: 'remote' },
     ],
   },
 };
@@ -304,6 +349,7 @@ export class ConstellationController {
   private labelElements: Map<string, SVGForeignObjectElement> = new Map();
   private messageElements: Map<string, SVGForeignObjectElement> = new Map();
   private rippleElements: Map<string, SVGCircleElement[]> = new Map(); // hero 漣漪
+  private remoteGroupElement: SVGGElement | null = null; // 遠端副本群組
   private viewBox = { width: 1920, height: 1080 };
   private reducedMotion = false;
 
@@ -423,8 +469,50 @@ export class ConstellationController {
     // 建立動畫時間軸
     const tl = gsap.timeline();
 
-    // 1. 移除舊連線
-    linesToRemove.forEach((line) => {
+    // 輔助函式：判斷是否為遠端副本
+    const isRemoteCopy = (id: string) => id.startsWith('r-');
+
+    // 判斷目標狀態是否有遠端副本
+    const targetHasRemote = targetState.stars.some((s) => isRemoteCopy(s.id));
+    const currentHasRemote = this.remoteGroupElement !== null;
+
+    // 分離遠端副本和一般元素
+    const remoteStarsToRemove = starsToRemove.filter((s) => isRemoteCopy(s.id));
+    const regularStarsToRemove = starsToRemove.filter((s) => !isRemoteCopy(s.id));
+    const remoteLinesToRemove = linesToRemove.filter((l) => isRemoteCopy(l.id));
+    const regularLinesToRemove = linesToRemove.filter((l) => !isRemoteCopy(l.id));
+
+    // 0. 遠端副本群組整體滑出動畫
+    // 條件：當前有遠端群組，且目標狀態沒有遠端副本
+    if (currentHasRemote && !targetHasRemote) {
+      if (this.reducedMotion) {
+        this.remoteGroupElement!.remove();
+      } else {
+        tl.to(
+          this.remoteGroupElement,
+          {
+            x: 300, // 向右滑出
+            opacity: 0,
+            duration: 0.5,
+            ease: 'power2.in',
+          },
+          0
+        );
+        const groupToRemove = this.remoteGroupElement!;
+        tl.add(() => groupToRemove.remove(), 0.5);
+      }
+      // 從 Map 中移除所有遠端元素的參照
+      this.currentState.stars
+        .filter((s) => isRemoteCopy(s.id))
+        .forEach((star) => this.starElements.delete(star.id));
+      this.currentState.lines
+        .filter((l) => isRemoteCopy(l.id))
+        .forEach((line) => this.lineElements.delete(line.id));
+      this.remoteGroupElement = null;
+    }
+
+    // 1. 移除一般舊連線（不是遠端副本）
+    regularLinesToRemove.forEach((line) => {
       const el = this.lineElements.get(line.id);
       if (el) {
         if (this.reducedMotion) {
@@ -437,8 +525,8 @@ export class ConstellationController {
       }
     });
 
-    // 2. 移除舊星點（使用 radius 動畫取代 scale，避免閃爍）
-    starsToRemove.forEach((star) => {
+    // 2. 移除一般舊星點（不是遠端副本，使用 radius 動畫取代 scale，避免閃爍）
+    regularStarsToRemove.forEach((star) => {
       const el = this.starElements.get(star.id);
       if (el) {
         if (this.reducedMotion) {
@@ -505,7 +593,7 @@ export class ConstellationController {
         const msgEl = this.messageElements.get(targetStar.id);
         if (msgEl) {
           const newX = x + 20;
-          const newY = y - 12;
+          const newY = y - 10;
           if (this.reducedMotion) {
             msgEl.setAttribute('x', newX.toString());
             msgEl.setAttribute('y', newY.toString());
@@ -599,7 +687,6 @@ export class ConstellationController {
     });
 
     // 5. 分離遠端副本和一般新增元素（遠端副本用位移動畫）
-    const isRemoteCopy = (id: string) => id.startsWith('r-');
     const getLocalId = (remoteId: string) => remoteId.slice(2); // 去掉 "r-" 前綴
 
     const remoteStars = starsToAdd.filter((s) => isRemoteCopy(s.id));
@@ -754,7 +841,8 @@ export class ConstellationController {
     });
 
     // 9. 遠端副本動畫（使用 group 確保完全同步）
-    if (remoteStars.length > 0 || remoteLines.length > 0) {
+    // 條件：目標有遠端副本，且當前沒有 remoteGroupElement（需要創建）
+    if (targetHasRemote && !this.remoteGroupElement && (remoteStars.length > 0 || remoteLines.length > 0)) {
       // 計算一般分支動畫的結束時間
       let maxRegularEndTime = 0;
 
@@ -839,6 +927,8 @@ export class ConstellationController {
       const svgRoot = this.starsContainer?.parentElement;
       if (svgRoot) {
         svgRoot.appendChild(remoteGroup);
+        // 保存遠端群組參照以便滑出動畫使用
+        this.remoteGroupElement = remoteGroup;
       }
 
       // 動畫：group 從本地位置滑動到遠端位置
@@ -867,6 +957,62 @@ export class ConstellationController {
           remoteAnimStartTime
         );
       }
+    }
+
+    // 9b. 如果目標有遠端且當前也有遠端群組，直接添加新元素到現有 group
+    if (targetHasRemote && this.remoteGroupElement && (remoteStars.length > 0 || remoteLines.length > 0)) {
+      // 添加新的遠端連線
+      remoteLines.forEach((line) => {
+        const remoteFromStar = targetState.stars.find((s) => s.id === line.from);
+        const remoteToStar = targetState.stars.find((s) => s.id === line.to);
+        if (!remoteFromStar || !remoteToStar) return;
+
+        const from = this.relativeToAbsolute(remoteFromStar.x, remoteFromStar.y);
+        const to = this.relativeToAbsolute(remoteToStar.x, remoteToStar.y);
+
+        const el = document.createElementNS(SVG_NS, 'path');
+        const style = LINE_STYLES[line.type];
+        const d = this.createMetroPath(from, to);
+
+        el.setAttribute('d', d);
+        el.setAttribute('stroke', style.stroke);
+        el.setAttribute('stroke-width', '2.5');
+        el.setAttribute('fill', 'none');
+        el.setAttribute('stroke-linecap', 'round');
+        el.setAttribute('stroke-linejoin', 'round');
+        el.setAttribute('data-id', line.id);
+        el.classList.add('constellation-line', `constellation-line--${line.type}`);
+
+        this.remoteGroupElement!.appendChild(el);
+        this.lineElements.set(line.id, el);
+
+        // 淡入動畫
+        if (!this.reducedMotion) {
+          gsap.set(el, { opacity: 0 });
+          tl.to(el, { opacity: style.opacity, duration: 0.3 }, 0.3);
+        } else {
+          gsap.set(el, { opacity: style.opacity });
+        }
+      });
+
+      // 添加新的遠端星點
+      remoteStars.forEach((star) => {
+        const el = this.createStarElement(star);
+        const targetRadius = star.radius || STAR_STYLES[star.type].radius;
+
+        this.remoteGroupElement!.appendChild(el);
+        this.starElements.set(star.id, el);
+
+        // 淡入動畫
+        if (!this.reducedMotion) {
+          el.setAttribute('r', '0');
+          gsap.set(el, { opacity: 0 });
+          tl.to(el, { attr: { r: targetRadius }, opacity: 1, duration: 0.3, ease: 'back.out(1.7)' }, 0.3);
+        } else {
+          el.setAttribute('r', targetRadius.toString());
+          gsap.set(el, { opacity: 1 });
+        }
+      });
     }
 
     // 10. 處理標籤的新增/移除
@@ -1040,11 +1186,11 @@ export class ConstellationController {
     const { x, y } = this.relativeToAbsolute(star.x, star.y);
     const fo = document.createElementNS(SVG_NS, 'foreignObject');
 
-    // 訊息顯示在星點右側
+    // 訊息顯示在星點右側，垂直居中對齊
     fo.setAttribute('x', (x + 20).toString());
-    fo.setAttribute('y', (y - 12).toString());
+    fo.setAttribute('y', (y - 10).toString());
     fo.setAttribute('width', '200');
-    fo.setAttribute('height', '30');
+    fo.setAttribute('height', '20');
     fo.setAttribute('data-star-id', star.id);
     fo.classList.add('constellation-message-fo');
 
@@ -1182,7 +1328,7 @@ export class ConstellationController {
       if (msgEl) {
         const { x, y } = this.relativeToAbsolute(star.x, star.y);
         msgEl.setAttribute('x', (x + 20).toString());
-        msgEl.setAttribute('y', (y - 12).toString());
+        msgEl.setAttribute('y', (y - 10).toString());
       }
     });
 
@@ -1211,11 +1357,13 @@ export class ConstellationController {
     this.labelElements.forEach((el) => el.remove());
     this.messageElements.forEach((el) => el.remove());
     this.rippleElements.forEach((ripples) => ripples.forEach((r) => r.remove()));
+    this.remoteGroupElement?.remove();
     this.starElements.clear();
     this.lineElements.clear();
     this.labelElements.clear();
     this.messageElements.clear();
     this.rippleElements.clear();
+    this.remoteGroupElement = null;
     this.currentState = { stars: [], lines: [], labels: [] };
   }
 }
