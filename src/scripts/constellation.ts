@@ -408,7 +408,7 @@ export const chapterStates: Record<string, ConstellationState> = {
         anchorStar: 'f3',
         position: 'left',
         type: 'pr',
-        title: 'Approved',
+        title: '通過',
         body: '審查通過，可以合併',
       },
     ],
