@@ -520,6 +520,53 @@ code {
   margin-right: var(--space-xs);
 }
 
+/* 可折疊 callout（details/summary） */
+.inline-callout--collapsible {
+  cursor: pointer;
+}
+
+.inline-callout--collapsible summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  list-style: none;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.inline-callout--collapsible summary::-webkit-details-marker {
+  display: none;
+}
+
+.inline-callout--collapsible summary::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--star-cyan);
+  margin-left: auto;
+  transition: transform var(--duration-fast) ease-out;
+}
+
+.inline-callout--collapsible[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.inline-callout--collapsible .inline-callout__icon {
+  margin-bottom: 0;
+}
+
+.inline-callout__content {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border);
+}
+
+.inline-callout__content p {
+  margin-bottom: var(--space-sm);
+}
+
 /* ── 7. 星座畫布 ── */
 .constellation-canvas {
   position: fixed;
@@ -767,6 +814,7 @@ code {
 .reveal-delay-3 { transition-delay: 300ms; }
 .reveal-delay-4 { transition-delay: 400ms; }
 .reveal-delay-5 { transition-delay: 500ms; }
+.reveal-delay-6 { transition-delay: 600ms; }
 
 /* 標題動畫 */
 .reveal-title {
@@ -852,6 +900,66 @@ code {
 .tools-list span {
   color: var(--text-ghost);
   font-size: 0.9rem;
+}
+
+/* ── 13. 快速開始區塊 ── */
+.quick-start {
+  margin-top: var(--space-lg);
+}
+
+.quick-start h3 {
+  margin-bottom: var(--space-md);
+}
+
+.quick-start__steps {
+  list-style: none;
+  counter-reset: step;
+}
+
+.quick-start__steps li {
+  position: relative;
+  padding-left: calc(var(--space-lg) + var(--space-sm));
+  padding-bottom: var(--space-md);
+  border-left: 2px solid var(--border);
+  margin-left: 12px;
+  counter-increment: step;
+}
+
+.quick-start__steps li:last-child {
+  border-left-color: transparent;
+  padding-bottom: 0;
+}
+
+.quick-start__steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: -13px;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--star-cyan);
+  color: var(--ink-black);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-start__steps li:last-child::before {
+  background: var(--star-gold);
+}
+
+.quick-start__steps a {
+  color: var(--star-cyan);
+  text-decoration: none;
+  transition: color var(--duration-fast) ease-out;
+}
+
+.quick-start__steps a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ── 10. 特殊效果 ── */
