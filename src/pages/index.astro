@@ -86,11 +86,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </button>
         </div>
 
-        <!-- 範例 -->
+        <!-- Conventional Commits 說明 -->
         <div class="inline-callout reveal reveal-delay-4">
           <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
+          <div>
+            <p>常見的提交前綴：</p>
+            <ul class="commit-types">
+              <li><code>feat:</code> 新功能</li>
+              <li><code>fix:</code> 修正錯誤</li>
+              <li><code>docs:</code> 文件更新</li>
+              <li><code>refactor:</code> 重構</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 範例 -->
+        <div class="inline-callout reveal reveal-delay-5">
+          <i class="ph ph-code inline-callout__icon"></i>
           <p>
-            範例：<code>git commit -m "fix: 修正標題字型大小"</code>
+            範例：<code>git commit -m "feat: 新增深色模式"</code>
           </p>
         </div>
       </div>
@@ -117,7 +131,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="cli-block reveal reveal-delay-3">
           <div class="cli-block__content">
             <span class="cli-block__prompt">$</span>
-            <code class="cli-block__command">git checkout -b 分支名稱</code>
+            <code class="cli-block__command">git checkout -b 類型/描述</code>
           </div>
           <button class="cli-block__copy" type="button" aria-label="複製指令">
             <i class="ph ph-copy cli-block__copy-icon"></i>
@@ -129,7 +143,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="inline-callout reveal reveal-delay-4">
           <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
           <p>
-            範例：<code>git checkout -b add-dark-mode</code>
+            範例：<code>git checkout -b feat/dark-mode</code>
           </p>
         </div>
       </div>
@@ -149,7 +163,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="chapter__body">
         <p class="reveal reveal-delay-2">
           把本地的 commit 上傳到遠端伺服器，<br />
-          作為備份，也方便與他人協作。
+          就像同步到雲端硬碟——備份，也方便協作。
         </p>
 
         <!-- CLI 區塊 -->
@@ -232,7 +246,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <h3 class="inline-card__title">新增深色模式</h3>
           </div>
           <p class="inline-card__body">
-            add-dark-mode → main
+            feat/dark-mode → main
           </p>
         </div>
 
@@ -283,7 +297,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="inline-callout reveal reveal-delay-4">
           <i class="ph-fill ph-lightbulb inline-callout__icon"></i>
           <p>
-            範例：<code>git merge add-dark-mode</code>
+            範例：<code>git merge feat/dark-mode</code>
           </p>
         </div>
       </div>

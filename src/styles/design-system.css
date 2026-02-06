@@ -388,14 +388,14 @@ code {
 }
 
 .inline-card__title {
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--text-bright);
   margin: 0;
 }
 
 .inline-card__body {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--text-ghost);
   line-height: 1.5;
   margin: 0;
@@ -422,9 +422,24 @@ code {
 .inline-callout p {
   margin: 0;
   color: var(--text-secondary);
-  font-style: italic;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.6;
+}
+
+/* Conventional Commits 類型列表 */
+.commit-types {
+  margin-top: var(--space-sm);
+  padding-left: var(--space-md);
+  list-style: none;
+}
+
+.commit-types li {
+  margin-bottom: var(--space-xs);
+  font-style: normal;
+}
+
+.commit-types code {
+  margin-right: var(--space-xs);
 }
 
 /* ── 7. 星座畫布 ── */
