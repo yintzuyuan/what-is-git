@@ -511,6 +511,45 @@ export class ConstellationController {
       this.remoteGroupElement = null;
     }
 
+    // 0b. 遠端副本部分移除（當前和目標都有遠端，但需要移除部分元素）
+    if (currentHasRemote && targetHasRemote && this.remoteGroupElement) {
+      // 移除多餘的遠端連線
+      remoteLinesToRemove.forEach((line) => {
+        const el = this.lineElements.get(line.id);
+        if (el) {
+          if (this.reducedMotion) {
+            el.remove();
+          } else {
+            tl.to(el, { opacity: 0, duration: 0.2 }, 0);
+            tl.add(() => el.remove(), 0.2);
+          }
+          this.lineElements.delete(line.id);
+        }
+      });
+
+      // 移除多餘的遠端星點
+      remoteStarsToRemove.forEach((star) => {
+        const el = this.starElements.get(star.id);
+        if (el) {
+          if (this.reducedMotion) {
+            el.remove();
+          } else {
+            tl.to(
+              el,
+              {
+                attr: { r: 0 },
+                opacity: 0,
+                duration: 0.2,
+              },
+              0
+            );
+            tl.add(() => el.remove(), 0.2);
+          }
+          this.starElements.delete(star.id);
+        }
+      });
+    }
+
     // 1. 移除一般舊連線（不是遠端副本）
     regularLinesToRemove.forEach((line) => {
       const el = this.lineElements.get(line.id);
@@ -923,6 +962,18 @@ export class ConstellationController {
         this.starElements.set(star.id, el);
       });
 
+      // 動畫：group 從本地位置滑動到遠端位置
+      const remoteAnimStartTime = maxRegularEndTime + 0.2;
+
+      // 先設置初始狀態再添加到 DOM，避免閃爍
+      if (!this.reducedMotion) {
+        gsap.set(remoteGroup, {
+          x: -offsetX,
+          y: -offsetY,
+          opacity: 0,
+        });
+      }
+
       // 將 group 加入 DOM（加到 starsContainer 的父元素，確保在正確層級）
       const svgRoot = this.starsContainer?.parentElement;
       if (svgRoot) {
@@ -931,20 +982,8 @@ export class ConstellationController {
         this.remoteGroupElement = remoteGroup;
       }
 
-      // 動畫：group 從本地位置滑動到遠端位置
-      const remoteAnimStartTime = maxRegularEndTime + 0.2;
-
-      if (this.reducedMotion) {
-        // 無動畫
-      } else {
-        // 初始位置：向左偏移（回到本地位置）
-        gsap.set(remoteGroup, {
-          x: -offsetX,
-          y: -offsetY,
-          opacity: 0,
-        });
-
-        // 淡入 + 滑動到最終位置
+      // 淡入 + 滑動到最終位置
+      if (!this.reducedMotion) {
         tl.to(
           remoteGroup,
           {
@@ -983,15 +1022,19 @@ export class ConstellationController {
         el.setAttribute('data-id', line.id);
         el.classList.add('constellation-line', `constellation-line--${line.type}`);
 
+        // 先設置初始狀態再添加到 DOM，避免閃爍
+        if (!this.reducedMotion) {
+          gsap.set(el, { opacity: 0 });
+        } else {
+          gsap.set(el, { opacity: style.opacity });
+        }
+
         this.remoteGroupElement!.appendChild(el);
         this.lineElements.set(line.id, el);
 
         // 淡入動畫
         if (!this.reducedMotion) {
-          gsap.set(el, { opacity: 0 });
           tl.to(el, { opacity: style.opacity, duration: 0.3 }, 0.3);
-        } else {
-          gsap.set(el, { opacity: style.opacity });
         }
       });
 
@@ -1000,17 +1043,21 @@ export class ConstellationController {
         const el = this.createStarElement(star);
         const targetRadius = star.radius || STAR_STYLES[star.type].radius;
 
+        // 先設置初始狀態再添加到 DOM，避免閃爍
+        if (!this.reducedMotion) {
+          el.setAttribute('r', '0');
+          gsap.set(el, { opacity: 0 });
+        } else {
+          el.setAttribute('r', targetRadius.toString());
+          gsap.set(el, { opacity: 1 });
+        }
+
         this.remoteGroupElement!.appendChild(el);
         this.starElements.set(star.id, el);
 
         // 淡入動畫
         if (!this.reducedMotion) {
-          el.setAttribute('r', '0');
-          gsap.set(el, { opacity: 0 });
           tl.to(el, { attr: { r: targetRadius }, opacity: 1, duration: 0.3, ease: 'back.out(1.7)' }, 0.3);
-        } else {
-          el.setAttribute('r', targetRadius.toString());
-          gsap.set(el, { opacity: 1 });
         }
       });
     }
