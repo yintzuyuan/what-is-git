@@ -45,16 +45,6 @@ npm run preview  # 預覽建置結果
 - 行高：1.75
 - 背景：#1a1a1a（深色主題）
 
-## 專案進度
-
-- [x] Phase 0：專案初始化
-- [x] Phase 1：規格撰寫（已遷移至 OpenSpec）
-- [x] Phase 2：設計系統
-- [x] Phase 3：核心動畫引擎
-- [ ] Phase 4：星座視覺化動畫
-- [ ] Phase 5：番外篇（Fork、貢獻、Code Review）
-- [ ] Phase 6：測試與優化
-
 ## OpenSpec 規格
 
 目前已定義的 capabilities：
